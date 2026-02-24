@@ -13,9 +13,10 @@
       color: #fff;
       overflow: hidden;
       position: relative;
+      transition: background 2s;
     }
 
-    /* Corações caindo na diagonal (vermelhos) */
+    /* Corações caindo na diagonal */
     .heart {
       position: absolute;
       font-size: 1.8rem;
@@ -30,12 +31,25 @@
       100% { transform: translateY(110vh) translateX(60vw) rotate(720deg); }
     }
 
-    /* Tela inicial - botão carta */
+    /* Explosão de corações */
+    .explosion-heart {
+      position: absolute;
+      font-size: 2.5rem;
+      pointer-events: none;
+      animation: explode 1.2s forwards;
+      z-index: 20;
+    }
+    @keyframes explode {
+      0% { transform: scale(0.5) translate(0,0); opacity: 1; }
+      50% { transform: scale(1.8) translate(var(--dx), var(--dy)); opacity: 1; }
+      100% { transform: scale(0) translate(var(--dx), var(--dy)); opacity: 0; }
+    }
+
+    /* Tela inicial - envelope */
     .intro {
       position: absolute;
       inset: 0;
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
       z-index: 10;
@@ -74,13 +88,13 @@
       white-space: nowrap;
     }
 
-    /* Tela principal após abrir */
+    /* Conteúdo principal */
     .main { 
       position: absolute;
       inset: 0;
       display: none;
       flex-direction: column;
-      justify-content: center;
+      justify-content: flex-start;
       align-items: center;
       padding: 20px;
     }
@@ -88,8 +102,9 @@
 
     .title {
       font-size: 3.8rem;
+      text-align: center;
       text-shadow: 0 0 20px rgba(255,255,255,0.9), 0 0 40px #ff3366;
-      margin-bottom: 60px;
+      margin: 40px 0 20px;
       animation: pulse-title 4s infinite ease-in-out;
     }
     @keyframes pulse-title {
@@ -97,43 +112,94 @@
       50%     { transform: scale(1.08); }
     }
 
+    /* Botão "CLIQUE AQUI" */
+    #nextBtn {
+      display: none;
+      margin: 20px auto;
+      padding: 15px 40px;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: white;
+      background: #4169e1;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(65,105,225,0.5);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    #nextBtn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 12px 30px rgba(65,105,225,0.7);
+    }
+
     .words-container {
       position: relative;
       width: 100vw;
-      height: 100vh;
+      height: 60vh;
+      margin-top: 40px;
     }
 
     .word {
       position: absolute;
       font-size: 2.2rem;
       font-weight: bold;
-      color: #ffffff; /* branco para todas */
+      color: #ffffff;
       text-shadow: 0 0 15px rgba(0,0,0,0.6), 0 0 30px #ff3366;
       pointer-events: none;
       animation: float 14s infinite ease-in-out;
     }
 
     .word.central {
-      font-size: 3.8rem; /* maior que as outras */
-      color: #ffffff; /* branco */
+      font-size: 4rem;
+      color: #ffffff;
       text-shadow: 0 0 30px #ffffff, 0 0 60px #ff69b4;
-      animation: pulse 2.5s infinite;
+      animation: pulse 2.8s infinite;
       pointer-events: auto;
       cursor: pointer;
       left: 50%;
       top: 50%;
       transform: translate(-50%, -50%);
-      z-index: 5; /* fica por cima se precisar */
+      white-space: nowrap;
+      z-index: 10;
     }
     @keyframes pulse {
       0%,100% { transform: translate(-50%, -50%) scale(1); }
-      50%     { transform: translate(-50%, -50%) scale(1.12); }
+      50%     { transform: translate(-50%, -50%) scale(1.10); }
     }
     @keyframes float {
       0%,100% { transform: translate(0,0) rotate(0deg); }
       25%     { transform: translate(30px, -40px) rotate(6deg); }
       50%     { transform: translate(-25px, 50px) rotate(-10deg); }
       75%     { transform: translate(40px, 30px) rotate(12deg); }
+    }
+
+    /* Tela das línguas e final */
+    .stage {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      text-align: center;
+      font-size: 2.5rem;
+      opacity: 0;
+      transition: opacity 1.5s;
+    }
+    .stage.visible {
+      display: flex;
+      opacity: 1;
+    }
+    .stage.final {
+      font-size: 2.8rem;
+      line-height: 1.5;
+      background: linear-gradient(135deg, #ff758c, #ff3366, #c0392b);
+    }
+    .heart-final {
+      font-size: 4rem;
+      animation: pulse 2s infinite;
+      margin: 20px 0;
     }
   </style>
 </head>
@@ -144,19 +210,53 @@
     <div class="envelope" onclick="openLetter()"></div>
   </div>
 
-  <!-- Conteúdo principal -->
+  <!-- Tela elogios + botão -->
   <div class="main" id="main">
     <h1 class="title">Minha Princesinha...</h1>
-
+    <button id="nextBtn" onclick="goToLanguages()">CLIQUE AQUI</button>
     <div class="words-container" id="words"></div>
   </div>
 
-  <!-- Áudio: YouTube oficial (melhor compatibilidade) -->
+  <!-- Etapa 1: 20 línguas -->
+  <div class="stage" id="languagesStage">
+    <div id="languagesList"></div>
+  </div>
+
+  <!-- Etapa final -->
+  <div class="stage final" id="finalStage">
+    <div class="heart-final">❤</div>
+    <p>eu te amo, mas falar isso em só uma lingua é muito pouco.<br>você é o meu amor, e eu quero vc ao meu lado sempre ❤</p>
+  </div>
+
+  <!-- Música YouTube -->
   <iframe id="musicPlayer" width="0" height="0" 
     src="https://www.youtube.com/embed/J7j1WneusdY?autoplay=0&loop=1&playlist=J7j1WneusdY&mute=0" 
     frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
   <script>
+    const languages = [
+      "Português: Eu te amo",
+      "Inglês: I love you",
+      "Espanhol: Te amo",
+      "Francês: Je t'aime",
+      "Alemão: Ich liebe dich",
+      "Italiano: Ti amo",
+      "Japonês: Aishiteru",
+      "Coreano: Saranghae",
+      "Chinês: Wǒ ài nǐ",
+      "Russo: Ya tebya lyublyu",
+      "Árabe: Uhibbuk",
+      "Hindi: Main tumse pyar karta hoon",
+      "Polonês: Kocham cię",
+      "Turco: Seni seviyorum",
+      "Sueco: Jag älskar dig",
+      "Holandês: Ik hou van jou",
+      "Grego: S'agapo",
+      "Húngaro: Szeretlek",
+      "Finlandês: Minä rakastan sinua",
+      "Havaiano: Aloha wau iā ʻoe"
+    ];
+
     // Corações caindo
     function createHeart() {
       const heart = document.createElement('div');
@@ -168,56 +268,101 @@
       document.body.appendChild(heart);
       setTimeout(() => heart.remove(), 25000);
     }
-    setInterval(createHeart, 350); // frequência boa
+    setInterval(createHeart, 350);
+
+    // Explosão ao abrir carta
+    function explodeHearts(x, y) {
+      const colors = ['❤️', '💖', '💗', '💓', '💞'];
+      for (let i = 0; i < 20; i++) {
+        const h = document.createElement('div');
+        h.classList.add('explosion-heart');
+        h.innerHTML = colors[Math.floor(Math.random() * colors.length)];
+        h.style.left = x + 'px';
+        h.style.top = y + 'px';
+        h.style.setProperty('--dx', (Math.random() - 0.5) * 300 + 'px');
+        h.style.setProperty('--dy', (Math.random() - 0.5) * 300 + 'px');
+        h.style.animationDelay = Math.random() * 0.3 + 's';
+        document.body.appendChild(h);
+        setTimeout(() => h.remove(), 1500);
+      }
+    }
 
     // Abrir carta
     function openLetter() {
+      const rect = document.querySelector('.envelope').getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      explodeHearts(centerX, centerY);
+
       document.getElementById('intro').classList.add('hidden');
       setTimeout(() => {
         document.getElementById('main').classList.add('visible');
+        document.getElementById('nextBtn').style.display = 'block';
         startWords();
-        // Toca a música (iframe autoplay após interação)
         document.getElementById('musicPlayer').src = document.getElementById('musicPlayer').src.replace('autoplay=0', 'autoplay=1');
       }, 1200);
     }
 
-    // Palavras espalhadas + central
+    // Palavras elogios
     function startWords() {
       const container = document.getElementById('words');
-      const words = [
-        "linda", "amorosa", "fofa", "carinhosa", "meiga", "companheira"
-      ];
+      const words = ["linda", "amorosa", "fofa", "carinhosa", "meiga", "companheira"];
 
-      // Palavras normais (espalhadas)
       words.forEach((text, i) => {
         const el = document.createElement('div');
         el.classList.add('word');
         el.innerText = text;
-
-        // Posições aleatórias reais (evita bordas e sobreposição excessiva)
-        let top = 20 + Math.random() * 60;
-        let left = 10 + Math.random() * 80;
-        // Evita ficar muito perto do centro
-        if (Math.abs(top - 50) < 15 && Math.abs(left - 50) < 20) {
-          top += (Math.random() > 0.5 ? 20 : -20);
-          left += (Math.random() > 0.5 ? 25 : -25);
+        let top = 15 + Math.random() * 70;
+        let left = 5 + Math.random() * 90;
+        const distX = Math.abs(left - 50);
+        const distY = Math.abs(top - 50);
+        if (distX < 30 && distY < 20) {
+          left += (left > 50 ? 35 : -35);
+          top += (top > 50 ? 25 : -25);
         }
-
+        left = Math.max(5, Math.min(95, left));
+        top = Math.max(10, Math.min(90, top));
         el.style.top = top + '%';
         el.style.left = left + '%';
         el.style.animationDelay = (i * 1.2 + Math.random() * 2) + 's';
-
         container.appendChild(el);
       });
 
-      // "amor da minha vida" centralizado e maior
       const central = document.createElement('div');
       central.classList.add('word', 'central');
       central.innerText = "amor da minha vida";
       container.appendChild(central);
     }
 
-    // Clique em qualquer lugar inicia/tenta música se necessário
+    // Ir para línguas
+    function goToLanguages() {
+      document.getElementById('main').style.display = 'none';
+      const langStage = document.getElementById('languagesStage');
+      langStage.classList.add('visible');
+
+      const list = document.getElementById('languagesList');
+      languages.forEach((lang, i) => {
+        const p = document.createElement('p');
+        p.innerText = lang;
+        p.style.opacity = 0;
+        p.style.animation = `fadeIn 1s forwards ${i * 0.2}s`;
+        list.appendChild(p);
+      });
+
+      setTimeout(() => {
+        langStage.classList.remove('visible');
+        document.getElementById('finalStage').classList.add('visible');
+      }, 10000); // 10 segundos
+    }
+
+    // Fade in para línguas
+    const style = document.createElement('style');
+    style.innerHTML = `
+      @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    `;
+    document.head.appendChild(style);
+
+    // Clique para música
     document.addEventListener('click', () => {
       const player = document.getElementById('musicPlayer');
       if (player.src.includes('autoplay=0')) {
