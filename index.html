@@ -31,7 +31,7 @@
       100% { transform: translateY(110vh) translateX(60vw) rotate(720deg); }
     }
 
-    /* Explosão de corações ao clicar na carta */
+    /* Explosão de corações */
     .explosion-heart {
       position: absolute;
       font-size: 2.5rem;
@@ -50,6 +50,7 @@
       position: absolute;
       inset: 0;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       z-index: 10;
@@ -79,16 +80,16 @@
       z-index: -1;
     }
     .envelope::after {
-      content: "Clique em mim, minha Princesinha 💌";
+      content: "Para minha Princesinha 💌";
       position: absolute;
-      bottom: -45px; left: 50%; transform: translateX(-50%);
-      font-size: 1.4rem;
+      bottom: -50px; left: 50%; transform: translateX(-50%);
+      font-size: 2rem;
       color: #fff;
       text-shadow: 0 2px 8px rgba(0,0,0,0.6);
       white-space: nowrap;
     }
 
-    /* Tela elogios + botão */
+    /* Tela elogios */
     .main { 
       position: absolute;
       inset: 0;
@@ -104,7 +105,7 @@
       font-size: 3.8rem;
       text-align: center;
       text-shadow: 0 0 20px rgba(255,255,255,0.9), 0 0 40px #ff3366;
-      margin: 40px 0 10px;
+      margin: 60px 0 20px;
       animation: pulse-title 4s infinite ease-in-out;
     }
     @keyframes pulse-title {
@@ -112,25 +113,25 @@
       50%     { transform: scale(1.08); }
     }
 
-    /* Botão azul "CLIQUE AQUI" */
+    /* Botão roxo "CLIQUE AQUI" */
     #nextBtn {
       display: none;
-      margin: 20px auto 40px;
-      padding: 15px 50px;
-      font-size: 1.6rem;
+      margin: 30px auto 50px;
+      padding: 18px 60px;
+      font-size: 1.7rem;
       font-weight: bold;
       color: white;
-      background: #4169e1;
+      background: #7d3cff;
       border: none;
-      border-radius: 50px;
+      border-radius: 60px; /* mais arredondado */
       cursor: pointer;
-      box-shadow: 0 8px 20px rgba(65,105,225,0.5);
+      box-shadow: 0 10px 25px rgba(125, 60, 255, 0.5);
       transition: all 0.3s;
     }
     #nextBtn:hover {
-      transform: scale(1.1);
-      box-shadow: 0 12px 30px rgba(65,105,225,0.7);
-      background: #5a7ee6;
+      transform: scale(1.12);
+      box-shadow: 0 15px 35px rgba(125, 60, 255, 0.7);
+      background: #9b6aff;
     }
 
     .words-container {
@@ -257,7 +258,6 @@
       "Havaiano: Aloha wau iā ʻoe"
     ];
 
-    // Corações caindo
     function createHeart() {
       const heart = document.createElement('div');
       heart.classList.add('heart');
@@ -270,7 +270,6 @@
     }
     setInterval(createHeart, 350);
 
-    // Explosão
     function explodeHearts(x, y) {
       const colors = ['❤️', '💖', '💗', '💓', '💞'];
       for (let i = 0; i < 20; i++) {
@@ -287,7 +286,6 @@
       }
     }
 
-    // Abrir carta
     function openLetter() {
       const rect = document.querySelector('.envelope').getBoundingClientRect();
       const centerX = rect.left + rect.width / 2;
@@ -303,7 +301,6 @@
       }, 1200);
     }
 
-    // Elogios (lista expandida)
     function startWords() {
       const container = document.getElementById('words');
       const words = [
@@ -337,7 +334,6 @@
       container.appendChild(central);
     }
 
-    // Próxima etapa: línguas
     function goToLanguages() {
       document.getElementById('main').style.display = 'none';
       const langStage = document.getElementById('languagesStage');
@@ -349,7 +345,7 @@
         p.innerText = lang;
         p.style.opacity = 0;
         p.style.animation = `fadeIn 1s forwards ${i * 0.15}s`;
-        p.style.margin = '10px 0';
+        p.style.margin = '12px 0';
         list.appendChild(p);
       });
 
@@ -359,14 +355,12 @@
       }, 10000);
     }
 
-    // Estilo fadeIn
     const style = document.createElement('style');
     style.innerHTML = `
       @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
     `;
     document.head.appendChild(style);
 
-    // Clique para música
     document.addEventListener('click', () => {
       const player = document.getElementById('musicPlayer');
       if (player.src.includes('autoplay=0')) {
