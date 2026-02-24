@@ -15,10 +15,10 @@
       position: relative;
       transition: background 2s;
     }
-    /* Corações caindo na diagonal */
+    /* Corações caindo (reduzido ~35%) */
     .heart {
       position: absolute;
-      top: -15vh;                 /* ← corrigido para nunca travar no topo */
+      top: -15vh;
       font-size: 1.8rem;
       color: #ff0000;
       pointer-events: none;
@@ -30,7 +30,7 @@
       0% { transform: translateY(0) translateX(0) rotate(0deg); }
       100% { transform: translateY(120vh) translateX(60vw) rotate(720deg); }
     }
-    /* Explosão de corações */
+    /* Explosão */
     .explosion-heart {
       position: absolute;
       font-size: 2.5rem;
@@ -43,27 +43,163 @@
       50% { transform: scale(1.8) translate(var(--dx), var(--dy)); opacity: 1; }
       100% { transform: scale(0) translate(var(--dx), var(--dy)); opacity: 0; }
     }
-    /* resto do CSS igual (não mexi) */
-    .intro { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 10; transition: opacity 1.2s ease; }
+
+    /* Tela inicial */
+    .intro {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+      transition: opacity 1.2s ease;
+    }
     .intro.hidden { opacity: 0; pointer-events: none; }
-    .envelope { width: 220px; height: 140px; background: linear-gradient(to bottom, #ff4757, #c0392b); border-radius: 10px 10px 50% 50% / 10% 10% 60% 60%; position: relative; cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.4); transition: transform 0.4s; }
+    .envelope {
+      width: 220px;
+      height: 140px;
+      background: linear-gradient(to bottom, #ff4757, #c0392b);
+      border-radius: 10px 10px 50% 50% / 10% 10% 60% 60%;
+      position: relative;
+      cursor: pointer;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      transition: transform 0.4s;
+    }
     .envelope:hover { transform: scale(1.08); }
-    .envelope::before { content: ""; position: absolute; top: -60px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 110px solid transparent; border-right: 110px solid transparent; border-bottom: 80px solid #e74c3c; z-index: -1; }
-    .envelope::after { content: "Para minha Princesinha 💌"; position: absolute; bottom: -50px; left: 50%; transform: translateX(-50%); font-size: 2rem; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,0.6); white-space: nowrap; }
-    .main { position: absolute; inset: 0; display: none; flex-direction: column; justify-content: flex-start; align-items: center; padding: 20px; }
+    .envelope::before {
+      content: "";
+      position: absolute;
+      top: -60px; left: 50%; transform: translateX(-50%);
+      width: 0; height: 0;
+      border-left: 110px solid transparent;
+      border-right: 110px solid transparent;
+      border-bottom: 80px solid #e74c3c;
+      z-index: -1;
+    }
+    .envelope::after {
+      content: "Para minha Princesinha 💌";
+      position: absolute;
+      bottom: -50px; left: 50%; transform: translateX(-50%);
+      font-size: 2rem;
+      color: #fff;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+      white-space: nowrap;
+    }
+
+    /* Tela elogios */
+    .main {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      padding: 20px;
+    }
     .main.visible { display: flex; }
-    .title { font-size: 3.8rem; text-align: center; text-shadow: 0 0 20px rgba(255,255,255,0.9), 0 0 40px #ff3366; margin: 60px 0 20px; animation: pulse-title 4s infinite ease-in-out; }
-    @keyframes pulse-title { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08); } }
-    #nextBtn { display: none; margin: 30px auto 50px; padding: 18px 60px; font-size: 1.7rem; font-weight: bold; color: white; background: #7d3cff; border: none; border-radius: 60px; cursor: pointer; box-shadow: 0 10px 25px rgba(125, 60, 255, 0.5); transition: all 0.3s; }
-    #nextBtn:hover { transform: scale(1.12); box-shadow: 0 15px 35px rgba(125, 60, 255, 0.7); background: #9b6aff; }
-    .words-container { position: relative; width: 100vw; height: 60vh; }
-    .word { position: absolute; font-size: 2.2rem; font-weight: bold; color: #ffffff; text-shadow: 0 0 15px rgba(0,0,0,0.6), 0 0 30px #ff3366; pointer-events: none; user-select: none; }
-    .word.central { font-size: 4rem; color: #ffffff; text-shadow: 0 0 30px #ffffff, 0 0 60px #ff69b4; animation: pulse 2.8s infinite; pointer-events: auto; cursor: pointer; left: 50%; top: 50%; transform: translate(-50%, -50%); white-space: nowrap; z-index: 10; }
-    @keyframes pulse { 0%,100% { transform: translate(-50%, -50%) scale(1); } 50% { transform: translate(-50%, -50%) scale(1.10); } }
-    .stage { position: absolute; inset: 0; display: none; flex-direction: column; justify-content: center; align-items: center; padding: 20px; text-align: center; font-size: 2.5rem; opacity: 0; transition: opacity 1.5s; }
-    .stage.visible { display: flex; opacity: 1; }
-    .stage.final { font-size: 2.8rem; line-height: 1.5; background: linear-gradient(135deg, #ff758c, #ff3366, #c0392b); }
-    .heart-final { font-size: 4rem; animation: pulse 2s infinite; margin: 20px 0; }
+    .title {
+      font-size: 3.8rem;
+      text-align: center;
+      text-shadow: 0 0 20px rgba(255,255,255,0.9), 0 0 40px #ff3366;
+      margin: 60px 0 20px;
+      animation: pulse-title 4s infinite ease-in-out;
+    }
+    @keyframes pulse-title {
+      0%,100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+    #nextBtn {
+      display: none;
+      margin: 30px auto 50px;
+      padding: 18px 60px;
+      font-size: 1.7rem;
+      font-weight: bold;
+      color: white;
+      background: #7d3cff;
+      border: none;
+      border-radius: 60px;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(125, 60, 255, 0.5);
+      transition: all 0.3s;
+    }
+    #nextBtn:hover {
+      transform: scale(1.12);
+      box-shadow: 0 15px 35px rgba(125, 60, 255, 0.7);
+      background: #9b6aff;
+    }
+    .words-container {
+      position: relative;
+      width: 100vw;
+      height: 60vh;
+    }
+    .word {
+      position: absolute;
+      font-size: 2.2rem;
+      font-weight: bold;
+      color: #ffffff;
+      text-shadow: 0 0 15px rgba(0,0,0,0.6), 0 0 30px #ff3366;
+      pointer-events: none;
+      user-select: none;
+    }
+    .word.central {
+      font-size: 4rem;
+      color: #ffffff;
+      text-shadow: 0 0 30px #ffffff, 0 0 60px #ff69b4;
+      animation: pulse 2.8s infinite;
+      pointer-events: auto;
+      cursor: pointer;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      white-space: nowrap;
+      z-index: 10;
+    }
+    @keyframes pulse {
+      0%,100% { transform: translate(-50%, -50%) scale(1); }
+      50% { transform: translate(-50%, -50%) scale(1.10); }
+    }
+
+    /* === NOVA PARTE: 20 línguas em DUAS COLUNAS === */
+    .stage {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      text-align: center;
+      font-size: 2.1rem;
+      opacity: 0;
+      transition: opacity 1.5s;
+    }
+    .stage.visible {
+      display: flex;
+      opacity: 1;
+    }
+    #languagesList {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);   /* DUAS COLUNAS */
+      gap: 18px 45px;
+      max-width: 920px;
+      text-align: left;
+    }
+    #languagesList p {
+      margin: 0;
+      white-space: nowrap;
+    }
+
+    .stage.final {
+      font-size: 2.8rem;
+      line-height: 1.5;
+      background: linear-gradient(135deg, #ff758c, #ff3366, #c0392b);
+    }
+    .heart-final {
+      font-size: 4rem;
+      animation: pulse 2s infinite;
+      margin: 20px 0;
+    }
   </style>
 </head>
 <body>
@@ -80,7 +216,7 @@
     <div class="words-container" id="words"></div>
   </div>
 
-  <!-- 20 línguas -->
+  <!-- 20 línguas em duas colunas -->
   <div class="stage" id="languagesStage">
     <div id="languagesList"></div>
   </div>
@@ -105,9 +241,8 @@
       "Grego: S'agapo","Húngaro: Szeretlek","Finlandês: Minä rakastan sinua","Havaiano: Aloha wau iā ʻoe"
     ];
 
-    // ====================== CORAÇÕES (reduzido 35%) ======================
     function createHeart() {
-      for (let i = 0; i < 3; i++) {        // 3 em vez de 4
+      for (let i = 0; i < 3; i++) {
         const heart = document.createElement('div');
         heart.classList.add('heart');
         heart.innerHTML = Math.random() > 0.5 ? '❤️' : '💕';
@@ -118,7 +253,7 @@
         setTimeout(() => heart.remove(), 25000);
       }
     }
-    setInterval(createHeart, 170);   // intervalo maior = menos corações
+    setInterval(createHeart, 170);
 
     function explodeHearts(x, y) {
       const colors = ['❤️', '💖', '💗', '💓', '💞'];
@@ -152,7 +287,6 @@
       const container = document.getElementById('words');
       container.innerHTML = '';
       const words = ["linda","amorosa","fofa","carinhosa","meiga","companheira","atraente","graciosa","elegante","estilosa","perfeitinha","beldade","incrível"];
-
       words.forEach(text => {
         const el = document.createElement('div');
         el.classList.add('word');
@@ -172,7 +306,6 @@
         el.style.animationDelay = Math.random() * 3 + 's';
         container.appendChild(el);
       });
-
       const central = document.createElement('div');
       central.classList.add('word', 'central');
       central.innerText = "amor da minha vida";
@@ -183,15 +316,17 @@
       document.getElementById('main').style.display = 'none';
       const langStage = document.getElementById('languagesStage');
       langStage.classList.add('visible');
+
       const list = document.getElementById('languagesList');
+      list.innerHTML = '';
       languages.forEach((lang, i) => {
         const p = document.createElement('p');
         p.innerText = lang;
         p.style.opacity = 0;
-        p.style.animation = `fadeIn 1s forwards ${i * 0.15}s`;
-        p.style.margin = '12px 0';
+        p.style.animation = `fadeIn 1s forwards ${i * 0.12}s`;
         list.appendChild(p);
       });
+
       setTimeout(() => {
         langStage.classList.remove('visible');
         document.getElementById('finalStage').classList.add('visible');
@@ -199,7 +334,9 @@
     }
 
     const style = document.createElement('style');
-    style.innerHTML = `@keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }`;
+    style.innerHTML = `
+      @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    `;
     document.head.appendChild(style);
 
     document.addEventListener('click', () => {
