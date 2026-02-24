@@ -18,6 +18,7 @@
     /* Corações caindo na diagonal */
     .heart {
       position: absolute;
+      top: -15vh;                 /* ← corrigido para nunca travar no topo */
       font-size: 1.8rem;
       color: #ff0000;
       pointer-events: none;
@@ -26,8 +27,8 @@
       opacity: 0.85;
     }
     @keyframes fall {
-      0% { transform: translateY(-10vh) translateX(0) rotate(0deg); }
-      100% { transform: translateY(110vh) translateX(60vw) rotate(720deg); }
+      0% { transform: translateY(0) translateX(0) rotate(0deg); }
+      100% { transform: translateY(120vh) translateX(60vw) rotate(720deg); }
     }
     /* Explosão de corações */
     .explosion-heart {
@@ -42,149 +43,27 @@
       50% { transform: scale(1.8) translate(var(--dx), var(--dy)); opacity: 1; }
       100% { transform: scale(0) translate(var(--dx), var(--dy)); opacity: 0; }
     }
-    /* Tela inicial - envelope */
-    .intro {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 10;
-      transition: opacity 1.2s ease;
-    }
+    /* resto do CSS igual (não mexi) */
+    .intro { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 10; transition: opacity 1.2s ease; }
     .intro.hidden { opacity: 0; pointer-events: none; }
-    .envelope {
-      width: 220px;
-      height: 140px;
-      background: linear-gradient(to bottom, #ff4757, #c0392b);
-      border-radius: 10px 10px 50% 50% / 10% 10% 60% 60%;
-      position: relative;
-      cursor: pointer;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-      transition: transform 0.4s;
-    }
+    .envelope { width: 220px; height: 140px; background: linear-gradient(to bottom, #ff4757, #c0392b); border-radius: 10px 10px 50% 50% / 10% 10% 60% 60%; position: relative; cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.4); transition: transform 0.4s; }
     .envelope:hover { transform: scale(1.08); }
-    .envelope::before {
-      content: "";
-      position: absolute;
-      top: -60px; left: 50%; transform: translateX(-50%);
-      width: 0; height: 0;
-      border-left: 110px solid transparent;
-      border-right: 110px solid transparent;
-      border-bottom: 80px solid #e74c3c;
-      z-index: -1;
-    }
-    .envelope::after {
-      content: "Para minha Princesinha 💌";
-      position: absolute;
-      bottom: -50px; left: 50%; transform: translateX(-50%);
-      font-size: 2rem;
-      color: #fff;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.6);
-      white-space: nowrap;
-    }
-    /* Tela elogios */
-    .main {
-      position: absolute;
-      inset: 0;
-      display: none;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: center;
-      padding: 20px;
-    }
+    .envelope::before { content: ""; position: absolute; top: -60px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 110px solid transparent; border-right: 110px solid transparent; border-bottom: 80px solid #e74c3c; z-index: -1; }
+    .envelope::after { content: "Para minha Princesinha 💌"; position: absolute; bottom: -50px; left: 50%; transform: translateX(-50%); font-size: 2rem; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,0.6); white-space: nowrap; }
+    .main { position: absolute; inset: 0; display: none; flex-direction: column; justify-content: flex-start; align-items: center; padding: 20px; }
     .main.visible { display: flex; }
-    .title {
-      font-size: 3.8rem;
-      text-align: center;
-      text-shadow: 0 0 20px rgba(255,255,255,0.9), 0 0 40px #ff3366;
-      margin: 60px 0 20px;
-      animation: pulse-title 4s infinite ease-in-out;
-    }
-    @keyframes pulse-title {
-      0%,100% { transform: scale(1); }
-      50% { transform: scale(1.08); }
-    }
-    /* Botão roxo "CLIQUE AQUI" */
-    #nextBtn {
-      display: none;
-      margin: 30px auto 50px;
-      padding: 18px 60px;
-      font-size: 1.7rem;
-      font-weight: bold;
-      color: white;
-      background: #7d3cff;
-      border: none;
-      border-radius: 60px;
-      cursor: pointer;
-      box-shadow: 0 10px 25px rgba(125, 60, 255, 0.5);
-      transition: all 0.3s;
-    }
-    #nextBtn:hover {
-      transform: scale(1.12);
-      box-shadow: 0 15px 35px rgba(125, 60, 255, 0.7);
-      background: #9b6aff;
-    }
-    .words-container {
-      position: relative;
-      width: 100vw;
-      height: 60vh;
-    }
-    .word {
-      position: absolute;
-      font-size: 2.2rem;
-      font-weight: bold;
-      color: #ffffff;
-      text-shadow: 0 0 15px rgba(0,0,0,0.6), 0 0 30px #ff3366;
-      pointer-events: none;
-      user-select: none;
-    }
-    .word.central {
-      font-size: 4rem;
-      color: #ffffff;
-      text-shadow: 0 0 30px #ffffff, 0 0 60px #ff69b4;
-      animation: pulse 2.8s infinite;
-      pointer-events: auto;
-      cursor: pointer;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      white-space: nowrap;
-      z-index: 10;
-    }
-    @keyframes pulse {
-      0%,100% { transform: translate(-50%, -50%) scale(1); }
-      50% { transform: translate(-50%, -50%) scale(1.10); }
-    }
-    /* Telas seguintes */
-    .stage {
-      position: absolute;
-      inset: 0;
-      display: none;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-      text-align: center;
-      font-size: 2.5rem;
-      opacity: 0;
-      transition: opacity 1.5s;
-    }
-    .stage.visible {
-      display: flex;
-      opacity: 1;
-    }
-    .stage.final {
-      font-size: 2.8rem;
-      line-height: 1.5;
-      background: linear-gradient(135deg, #ff758c, #ff3366, #c0392b);
-    }
-    .heart-final {
-      font-size: 4rem;
-      animation: pulse 2s infinite;
-      margin: 20px 0;
-    }
+    .title { font-size: 3.8rem; text-align: center; text-shadow: 0 0 20px rgba(255,255,255,0.9), 0 0 40px #ff3366; margin: 60px 0 20px; animation: pulse-title 4s infinite ease-in-out; }
+    @keyframes pulse-title { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+    #nextBtn { display: none; margin: 30px auto 50px; padding: 18px 60px; font-size: 1.7rem; font-weight: bold; color: white; background: #7d3cff; border: none; border-radius: 60px; cursor: pointer; box-shadow: 0 10px 25px rgba(125, 60, 255, 0.5); transition: all 0.3s; }
+    #nextBtn:hover { transform: scale(1.12); box-shadow: 0 15px 35px rgba(125, 60, 255, 0.7); background: #9b6aff; }
+    .words-container { position: relative; width: 100vw; height: 60vh; }
+    .word { position: absolute; font-size: 2.2rem; font-weight: bold; color: #ffffff; text-shadow: 0 0 15px rgba(0,0,0,0.6), 0 0 30px #ff3366; pointer-events: none; user-select: none; }
+    .word.central { font-size: 4rem; color: #ffffff; text-shadow: 0 0 30px #ffffff, 0 0 60px #ff69b4; animation: pulse 2.8s infinite; pointer-events: auto; cursor: pointer; left: 50%; top: 50%; transform: translate(-50%, -50%); white-space: nowrap; z-index: 10; }
+    @keyframes pulse { 0%,100% { transform: translate(-50%, -50%) scale(1); } 50% { transform: translate(-50%, -50%) scale(1.10); } }
+    .stage { position: absolute; inset: 0; display: none; flex-direction: column; justify-content: center; align-items: center; padding: 20px; text-align: center; font-size: 2.5rem; opacity: 0; transition: opacity 1.5s; }
+    .stage.visible { display: flex; opacity: 1; }
+    .stage.final { font-size: 2.8rem; line-height: 1.5; background: linear-gradient(135deg, #ff758c, #ff3366, #c0392b); }
+    .heart-final { font-size: 4rem; animation: pulse 2s infinite; margin: 20px 0; }
   </style>
 </head>
 <body>
@@ -218,7 +97,7 @@
     frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
   <script>
-    const languages = [ /* sua lista original */ 
+    const languages = [
       "Português: Eu te amo","Inglês: I love you","Espanhol: Te amo","Francês: Je t'aime",
       "Alemão: Ich liebe dich","Italiano: Ti amo","Japonês: Aishiteru","Coreano: Saranghae",
       "Chinês: Wǒ ài nǐ","Russo: Ya tebya lyublyu","Árabe: Uhibbuk","Hindi: Main tumse pyar karta hoon",
@@ -226,25 +105,21 @@
       "Grego: S'agapo","Húngaro: Szeretlek","Finlandês: Minä rakastan sinua","Havaiano: Aloha wau iā ʻoe"
     ];
 
-    let wordElements = [];
-
-    // ====================== CORAÇÕES CAINDO (MUITO MAIS DENSOS) ======================
+    // ====================== CORAÇÕES (reduzido 35%) ======================
     function createHeart() {
-      for (let i = 0; i < 4; i++) {   // 4 corações por vez
+      for (let i = 0; i < 3; i++) {        // 3 em vez de 4
         const heart = document.createElement('div');
         heart.classList.add('heart');
         heart.innerHTML = Math.random() > 0.5 ? '❤️' : '💕';
         heart.style.left = Math.random() * 100 + 'vw';
-        heart.style.animationDuration = (6 + Math.random() * 10) + 's';
-        heart.style.animationDelay = Math.random() * 3 + 's';
-        heart.style.fontSize = (1.4 + Math.random() * 1.2) + 'rem';
+        heart.style.animationDuration = (8 + Math.random() * 11) + 's';
+        heart.style.animationDelay = Math.random() * 2 + 's';
         document.body.appendChild(heart);
-        setTimeout(() => heart.remove(), 22000);
+        setTimeout(() => heart.remove(), 25000);
       }
     }
-    setInterval(createHeart, 110);   // bem mais frequente
+    setInterval(createHeart, 170);   // intervalo maior = menos corações
 
-    // ====================== EXPLOSÃO ======================
     function explodeHearts(x, y) {
       const colors = ['❤️', '💖', '💗', '💓', '💞'];
       for (let i = 0; i < 20; i++) {
@@ -263,10 +138,7 @@
 
     function openLetter() {
       const rect = document.querySelector('.envelope').getBoundingClientRect();
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
-      explodeHearts(centerX, centerY);
-
+      explodeHearts(rect.left + rect.width / 2, rect.top + rect.height / 2);
       document.getElementById('intro').classList.add('hidden');
       setTimeout(() => {
         document.getElementById('main').classList.add('visible');
@@ -276,84 +148,37 @@
       }, 1200);
     }
 
-    // ====================== PALAVRAS COM HITBOX E REPULSÃO ======================
     function startWords() {
       const container = document.getElementById('words');
       container.innerHTML = '';
-      wordElements = [];
-
-      const words = [
-        "linda", "amorosa", "fofa", "carinhosa", "meiga", "companheira",
-        "atraente", "graciosa", "elegante", "estilosa", "perfeitinha", "beldade", "incrível"
-      ];
+      const words = ["linda","amorosa","fofa","carinhosa","meiga","companheira","atraente","graciosa","elegante","estilosa","perfeitinha","beldade","incrível"];
 
       words.forEach(text => {
         const el = document.createElement('div');
         el.classList.add('word');
         el.innerText = text;
-        el.x = 8 + Math.random() * 84;
-        el.y = 12 + Math.random() * 68;
-        el.vx = (Math.random() - 0.5) * 0.8;
-        el.vy = (Math.random() - 0.5) * 0.8;
-        el.style.left = el.x + '%';
-        el.style.top  = el.y + '%';
+        let top = 15 + Math.random() * 70;
+        let left = 5 + Math.random() * 90;
+        const distX = Math.abs(left - 50);
+        const distY = Math.abs(top - 50);
+        if (distX < 30 && distY < 20) {
+          left += (left > 50 ? 35 : -35);
+          top += (top > 50 ? 25 : -25);
+        }
+        left = Math.max(5, Math.min(95, left));
+        top = Math.max(10, Math.min(90, top));
+        el.style.top = top + '%';
+        el.style.left = left + '%';
+        el.style.animationDelay = Math.random() * 3 + 's';
         container.appendChild(el);
-        wordElements.push(el);
       });
 
-      // palavra central
       const central = document.createElement('div');
       central.classList.add('word', 'central');
       central.innerText = "amor da minha vida";
       container.appendChild(central);
-
-      requestAnimationFrame(updateWords);
     }
 
-    function updateWords() {
-      const minDist = 16; // tamanho da hitbox (quanto maior = mais espaço)
-
-      for (let i = 0; i < wordElements.length; i++) {
-        const a = wordElements[i];
-
-        a.x += a.vx;
-        a.y += a.vy;
-
-        // repulsão entre as palavras
-        for (let j = i + 1; j < wordElements.length; j++) {
-          const b = wordElements[j];
-          const dx = a.x - b.x;
-          const dy = a.y - b.y;
-          const dist = Math.sqrt(dx*dx + dy*dy);
-
-          if (dist < minDist && dist > 1) {
-            const force = (minDist - dist) / minDist * 1.2;
-            a.vx += (dx / dist) * force;
-            a.vy += (dy / dist) * force;
-            b.vx -= (dx / dist) * force;
-            b.vy -= (dy / dist) * force;
-          }
-        }
-
-        // paredes
-        if (a.x < 6 || a.x > 94) a.vx *= -0.8;
-        if (a.y < 10 || a.y > 85) a.vy *= -0.8;
-
-        a.x = Math.max(6, Math.min(94, a.x));
-        a.y = Math.max(10, Math.min(85, a.y));
-
-        // atrito
-        a.vx *= 0.96;
-        a.vy *= 0.96;
-
-        a.style.left = a.x + '%';
-        a.style.top  = a.y + '%';
-      }
-
-      requestAnimationFrame(updateWords);
-    }
-
-    // ====================== RESTO DO CÓDIGO (sem alteração) ======================
     function goToLanguages() {
       document.getElementById('main').style.display = 'none';
       const langStage = document.getElementById('languagesStage');
@@ -374,9 +199,7 @@
     }
 
     const style = document.createElement('style');
-    style.innerHTML = `
-      @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-    `;
+    style.innerHTML = `@keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }`;
     document.head.appendChild(style);
 
     document.addEventListener('click', () => {
