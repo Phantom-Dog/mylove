@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Para minha Princesinha 💕</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      height: 100vh;
+      background: linear-gradient(135deg, #ffe4e1, #ffc1cc, #ff9aa2, #ff758c);
+      font-family: 'Georgia', 'Times New Roman', serif;
+      color: #fff;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Corações caindo na diagonal */
+    .heart {
+      position: absolute;
+      font-size: 1.8rem;
+      color: #ff0000;
+      pointer-events: none;
+      user-select: none;
+      animation: fall linear infinite;
+      opacity: 0.85;
+    }
+    @keyframes fall {
+      0%   { transform: translateY(-10vh) translateX(0) rotate(0deg); }
+      100% { transform: translateY(110vh) translateX(60vw) rotate(720deg); }
+    }
+
+    /* Tela inicial - botão carta */
+    .intro {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+      transition: opacity 1.2s ease;
+    }
+    .intro.hidden { opacity: 0; pointer-events: none; }
+
+    .envelope {
+      width: 220px;
+      height: 140px;
+      background: linear-gradient(to bottom, #ff4757, #c0392b);
+      border-radius: 10px 10px 50% 50% / 10% 10% 60% 60%;
+      position: relative;
+      cursor: pointer;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      transition: transform 0.4s;
+    }
+    .envelope:hover { transform: scale(1.08); }
+    .envelope::before {
+      content: "";
+      position: absolute;
+      top: -60px; left: 50%; transform: translateX(-50%);
+      width: 0; height: 0;
+      border-left: 110px solid transparent;
+      border-right: 110px solid transparent;
+      border-bottom: 80px solid #e74c3c;
+      z-index: -1;
+    }
+    .envelope::after {
+      content: "Clique em mim, minha Princesinha 💌";
+      position: absolute;
+      bottom: -45px; left: 50%; transform: translateX(-50%);
+      font-size: 1.4rem;
+      color: #fff;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+      white-space: nowrap;
+    }
+
+    /* Tela principal após abrir */
+    .main { 
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .main.visible { display: flex; }
+
+    .title {
+      font-size: 3.8rem;
+      text-shadow: 0 0 20px rgba(255,255,255,0.9), 0 0 40px #ff3366;
+      margin-bottom: 60px;
+      animation: pulse-title 4s infinite ease-in-out;
+    }
+    @keyframes pulse-title {
+      0%,100% { transform: scale(1); }
+      50%     { transform: scale(1.08); }
+    }
+
+    .words-container {
+      position: relative;
+      width: 90vw;
+      height: 70vh;
+      max-width: 1000px;
+      max-height: 600px;
+    }
+
+    .word {
+      position: absolute;
+      font-size: 2.2rem;
+      font-weight: bold;
+      color: #fff;
+      text-shadow: 0 0 15px rgba(0,0,0,0.6), 0 0 30px #ff3366;
+      pointer-events: none;
+      animation: float 12s infinite ease-in-out;
+    }
+
+    .word.pulsing {
+      font-size: 3.5rem;
+      color: #ffeb3b;
+      text-shadow: 0 0 30px #ffeb3b, 0 0 60px #ff9800;
+      animation: pulse 2.2s infinite;
+      pointer-events: auto;
+      cursor: pointer;
+    }
+    @keyframes pulse {
+      0%,100% { transform: scale(1); }
+      50%     { transform: scale(1.15); }
+    }
+    @keyframes float {
+      0%,100% { transform: translate(0,0) rotate(0deg); }
+      25%     { transform: translate(20px, -30px) rotate(5deg); }
+      50%     { transform: translate(-15px, 40px) rotate(-8deg); }
+      75%     { transform: translate(30px, 20px) rotate(10deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Corações caindo (serão criados via JS) -->
+  
+  <!-- Tela inicial -->
+  <div class="intro" id="intro">
+    <div class="envelope" onclick="openLetter()"></div>
+  </div>
+
+  <!-- Conteúdo principal (escondido no início) -->
+  <div class="main" id="main">
+    <h1 class="title">Minha Princesinha...</h1>
+
+    <div class="words-container" id="words"></div>
+  </div>
+
+  <!-- Áudio de fundo (autoplay bloqueado em muitos navegadores, por isso botão) -->
+  <audio id="bgMusic" loop>
+    <!-- Opção 1: YouTube embed indireto (mais confiável, mas precisa de interação) -->
+    <!-- <source src="https://www.youtube.com/embed/J7j1WneusdY?autoplay=1&loop=1&playlist=J7j1WneusdY" type="audio/mp4"> -->
+    
+    <!-- Opção 2: Se você conseguir hospedar o MP3 no GitHub ou outro lugar -->
+    <!-- <source src="poesia-pra-ela.mp3" type="audio/mpeg"> -->
+    
+    Seu navegador não suporta áudio.
+  </audio>
+
+  <script>
+    // 1. Corações caindo aleatórios
+    function createHeart() {
+      const heart = document.createElement('div');
+      heart.classList.add('heart');
+      heart.innerHTML = '❤️';
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.animationDuration = (Math.random() * 8 + 10) + 's'; // 10 a 18s
+      heart.style.animationDelay = Math.random() * 5 + 's';
+      document.body.appendChild(heart);
+
+      setTimeout(() => heart.remove(), 20000);
+    }
+
+    setInterval(createHeart, 400); // a cada ~0.4s um coração novo (boa frequência)
+
+    // 2. Abrir a carta
+    function openLetter() {
+      document.getElementById('intro').classList.add('hidden');
+      setTimeout(() => {
+        document.getElementById('main').classList.add('visible');
+        startWords();
+        // Tentar tocar música (precisa de interação do usuário antes)
+        document.getElementById('bgMusic').play().catch(() => {
+          console.log("Autoplay bloqueado - clique em qualquer lugar para iniciar música");
+        });
+      }, 1200);
+    }
+
+    // 3. Criar as palavras espalhadas
+    function startWords() {
+      const container = document.getElementById('words');
+      const words = [
+        { text: "linda", class: "" },
+        { text: "amorosa", class: "" },
+        { text: "fofa", class: "" },
+        { text: "carinhosa", class: "" },
+        { text: "meiga", class: "" },
+        { text: "companheira", class: "" },
+        { text: "amor da minha vida", class: "pulsing" }
+      ];
+
+      words.forEach((w, i) => {
+        const el = document.createElement('div');
+        el.classList.add('word');
+        if (w.class) el.classList.add(w.class);
+        el.innerText = w.text;
+
+        // Posições aleatórias, mas evitando sobreposição demais
+        const top = 10 + Math.random() * 70;
+        const left = 5 + (i * 12) + Math.random() * 8; // espalha um pouco mais horizontal
+        el.style.top  = top + '%';
+        el.style.left = left + '%';
+
+        // Animação com delay diferente pra cada palavra
+        el.style.animationDelay = (i * 0.8) + 's';
+
+        container.appendChild(el);
+      });
+    }
+
+    // Clique em qualquer lugar após abrir → tenta tocar música
+    document.addEventListener('click', () => {
+      document.getElementById('bgMusic').play().catch(() => {});
+    }, { once: true });
+  </script>
+</body>
+</html>
