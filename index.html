@@ -15,7 +15,6 @@
       position: relative;
       transition: background 2s;
     }
-
     /* Corações caindo na diagonal */
     .heart {
       position: absolute;
@@ -27,10 +26,9 @@
       opacity: 0.85;
     }
     @keyframes fall {
-      0%   { transform: translateY(-10vh) translateX(0) rotate(0deg); }
+      0% { transform: translateY(-10vh) translateX(0) rotate(0deg); }
       100% { transform: translateY(110vh) translateX(60vw) rotate(720deg); }
     }
-
     /* Explosão de corações */
     .explosion-heart {
       position: absolute;
@@ -44,7 +42,6 @@
       50% { transform: scale(1.8) translate(var(--dx), var(--dy)); opacity: 1; }
       100% { transform: scale(0) translate(var(--dx), var(--dy)); opacity: 0; }
     }
-
     /* Tela inicial - envelope */
     .intro {
       position: absolute;
@@ -57,7 +54,6 @@
       transition: opacity 1.2s ease;
     }
     .intro.hidden { opacity: 0; pointer-events: none; }
-
     .envelope {
       width: 220px;
       height: 140px;
@@ -88,9 +84,8 @@
       text-shadow: 0 2px 8px rgba(0,0,0,0.6);
       white-space: nowrap;
     }
-
     /* Tela elogios */
-    .main { 
+    .main {
       position: absolute;
       inset: 0;
       display: none;
@@ -100,7 +95,6 @@
       padding: 20px;
     }
     .main.visible { display: flex; }
-
     .title {
       font-size: 3.8rem;
       text-align: center;
@@ -110,9 +104,8 @@
     }
     @keyframes pulse-title {
       0%,100% { transform: scale(1); }
-      50%     { transform: scale(1.08); }
+      50% { transform: scale(1.08); }
     }
-
     /* Botão roxo "CLIQUE AQUI" */
     #nextBtn {
       display: none;
@@ -123,7 +116,7 @@
       color: white;
       background: #7d3cff;
       border: none;
-      border-radius: 60px; /* mais arredondado */
+      border-radius: 60px;
       cursor: pointer;
       box-shadow: 0 10px 25px rgba(125, 60, 255, 0.5);
       transition: all 0.3s;
@@ -133,13 +126,11 @@
       box-shadow: 0 15px 35px rgba(125, 60, 255, 0.7);
       background: #9b6aff;
     }
-
     .words-container {
       position: relative;
       width: 100vw;
       height: 60vh;
     }
-
     .word {
       position: absolute;
       font-size: 2.2rem;
@@ -147,9 +138,8 @@
       color: #ffffff;
       text-shadow: 0 0 15px rgba(0,0,0,0.6), 0 0 30px #ff3366;
       pointer-events: none;
-      animation: float 14s infinite ease-in-out;
+      user-select: none;
     }
-
     .word.central {
       font-size: 4rem;
       color: #ffffff;
@@ -165,15 +155,8 @@
     }
     @keyframes pulse {
       0%,100% { transform: translate(-50%, -50%) scale(1); }
-      50%     { transform: translate(-50%, -50%) scale(1.10); }
+      50% { transform: translate(-50%, -50%) scale(1.10); }
     }
-    @keyframes float {
-      0%,100% { transform: translate(0,0) rotate(0deg); }
-      25%     { transform: translate(30px, -40px) rotate(6deg); }
-      50%     { transform: translate(-25px, 50px) rotate(-10deg); }
-      75%     { transform: translate(40px, 30px) rotate(12deg); }
-    }
-
     /* Telas seguintes */
     .stage {
       position: absolute;
@@ -230,46 +213,38 @@
   </div>
 
   <!-- Música -->
-  <iframe id="musicPlayer" width="0" height="0" 
-    src="https://www.youtube.com/embed/J7j1WneusdY?autoplay=0&loop=1&playlist=J7j1WneusdY&mute=0" 
+  <iframe id="musicPlayer" width="0" height="0"
+    src="https://www.youtube.com/embed/J7j1WneusdY?autoplay=0&loop=1&playlist=J7j1WneusdY&mute=0"
     frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
   <script>
-    const languages = [
-      "Português: Eu te amo",
-      "Inglês: I love you",
-      "Espanhol: Te amo",
-      "Francês: Je t'aime",
-      "Alemão: Ich liebe dich",
-      "Italiano: Ti amo",
-      "Japonês: Aishiteru",
-      "Coreano: Saranghae",
-      "Chinês: Wǒ ài nǐ",
-      "Russo: Ya tebya lyublyu",
-      "Árabe: Uhibbuk",
-      "Hindi: Main tumse pyar karta hoon",
-      "Polonês: Kocham cię",
-      "Turco: Seni seviyorum",
-      "Sueco: Jag älskar dig",
-      "Holandês: Ik hou van jou",
-      "Grego: S'agapo",
-      "Húngaro: Szeretlek",
-      "Finlandês: Minä rakastan sinua",
-      "Havaiano: Aloha wau iā ʻoe"
+    const languages = [ /* sua lista original */ 
+      "Português: Eu te amo","Inglês: I love you","Espanhol: Te amo","Francês: Je t'aime",
+      "Alemão: Ich liebe dich","Italiano: Ti amo","Japonês: Aishiteru","Coreano: Saranghae",
+      "Chinês: Wǒ ài nǐ","Russo: Ya tebya lyublyu","Árabe: Uhibbuk","Hindi: Main tumse pyar karta hoon",
+      "Polonês: Kocham cię","Turco: Seni seviyorum","Sueco: Jag älskar dig","Holandês: Ik hou van jou",
+      "Grego: S'agapo","Húngaro: Szeretlek","Finlandês: Minä rakastan sinua","Havaiano: Aloha wau iā ʻoe"
     ];
 
-    function createHeart() {
-      const heart = document.createElement('div');
-      heart.classList.add('heart');
-      heart.innerHTML = Math.random() > 0.5 ? '❤️' : '💕';
-      heart.style.left = Math.random() * 100 + 'vw';
-      heart.style.animationDuration = (Math.random() * 8 + 10) + 's';
-      heart.style.animationDelay = Math.random() * 4 + 's';
-      document.body.appendChild(heart);
-      setTimeout(() => heart.remove(), 25000);
-    }
-    setInterval(createHeart, 350);
+    let wordElements = [];
 
+    // ====================== CORAÇÕES CAINDO (MUITO MAIS DENSOS) ======================
+    function createHeart() {
+      for (let i = 0; i < 4; i++) {   // 4 corações por vez
+        const heart = document.createElement('div');
+        heart.classList.add('heart');
+        heart.innerHTML = Math.random() > 0.5 ? '❤️' : '💕';
+        heart.style.left = Math.random() * 100 + 'vw';
+        heart.style.animationDuration = (6 + Math.random() * 10) + 's';
+        heart.style.animationDelay = Math.random() * 3 + 's';
+        heart.style.fontSize = (1.4 + Math.random() * 1.2) + 'rem';
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 22000);
+      }
+    }
+    setInterval(createHeart, 110);   // bem mais frequente
+
+    // ====================== EXPLOSÃO ======================
     function explodeHearts(x, y) {
       const colors = ['❤️', '💖', '💗', '💓', '💞'];
       for (let i = 0; i < 20; i++) {
@@ -301,44 +276,88 @@
       }, 1200);
     }
 
+    // ====================== PALAVRAS COM HITBOX E REPULSÃO ======================
     function startWords() {
       const container = document.getElementById('words');
+      container.innerHTML = '';
+      wordElements = [];
+
       const words = [
         "linda", "amorosa", "fofa", "carinhosa", "meiga", "companheira",
         "atraente", "graciosa", "elegante", "estilosa", "perfeitinha", "beldade", "incrível"
       ];
 
-      words.forEach((text, i) => {
+      words.forEach(text => {
         const el = document.createElement('div');
         el.classList.add('word');
         el.innerText = text;
-        let top = 15 + Math.random() * 70;
-        let left = 5 + Math.random() * 90;
-        const distX = Math.abs(left - 50);
-        const distY = Math.abs(top - 50);
-        if (distX < 30 && distY < 20) {
-          left += (left > 50 ? 35 : -35);
-          top += (top > 50 ? 25 : -25);
-        }
-        left = Math.max(5, Math.min(95, left));
-        top = Math.max(10, Math.min(90, top));
-        el.style.top = top + '%';
-        el.style.left = left + '%';
-        el.style.animationDelay = (i * 0.8 + Math.random() * 2) + 's';
+        el.x = 8 + Math.random() * 84;
+        el.y = 12 + Math.random() * 68;
+        el.vx = (Math.random() - 0.5) * 0.8;
+        el.vy = (Math.random() - 0.5) * 0.8;
+        el.style.left = el.x + '%';
+        el.style.top  = el.y + '%';
         container.appendChild(el);
+        wordElements.push(el);
       });
 
+      // palavra central
       const central = document.createElement('div');
       central.classList.add('word', 'central');
       central.innerText = "amor da minha vida";
       container.appendChild(central);
+
+      requestAnimationFrame(updateWords);
     }
 
+    function updateWords() {
+      const minDist = 16; // tamanho da hitbox (quanto maior = mais espaço)
+
+      for (let i = 0; i < wordElements.length; i++) {
+        const a = wordElements[i];
+
+        a.x += a.vx;
+        a.y += a.vy;
+
+        // repulsão entre as palavras
+        for (let j = i + 1; j < wordElements.length; j++) {
+          const b = wordElements[j];
+          const dx = a.x - b.x;
+          const dy = a.y - b.y;
+          const dist = Math.sqrt(dx*dx + dy*dy);
+
+          if (dist < minDist && dist > 1) {
+            const force = (minDist - dist) / minDist * 1.2;
+            a.vx += (dx / dist) * force;
+            a.vy += (dy / dist) * force;
+            b.vx -= (dx / dist) * force;
+            b.vy -= (dy / dist) * force;
+          }
+        }
+
+        // paredes
+        if (a.x < 6 || a.x > 94) a.vx *= -0.8;
+        if (a.y < 10 || a.y > 85) a.vy *= -0.8;
+
+        a.x = Math.max(6, Math.min(94, a.x));
+        a.y = Math.max(10, Math.min(85, a.y));
+
+        // atrito
+        a.vx *= 0.96;
+        a.vy *= 0.96;
+
+        a.style.left = a.x + '%';
+        a.style.top  = a.y + '%';
+      }
+
+      requestAnimationFrame(updateWords);
+    }
+
+    // ====================== RESTO DO CÓDIGO (sem alteração) ======================
     function goToLanguages() {
       document.getElementById('main').style.display = 'none';
       const langStage = document.getElementById('languagesStage');
       langStage.classList.add('visible');
-
       const list = document.getElementById('languagesList');
       languages.forEach((lang, i) => {
         const p = document.createElement('p');
@@ -348,7 +367,6 @@
         p.style.margin = '12px 0';
         list.appendChild(p);
       });
-
       setTimeout(() => {
         langStage.classList.remove('visible');
         document.getElementById('finalStage').classList.add('visible');
