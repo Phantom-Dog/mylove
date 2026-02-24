@@ -31,7 +31,7 @@
       100% { transform: translateY(110vh) translateX(60vw) rotate(720deg); }
     }
 
-    /* Explosão de corações */
+    /* Explosão de corações ao clicar na carta */
     .explosion-heart {
       position: absolute;
       font-size: 2.5rem;
@@ -88,7 +88,7 @@
       white-space: nowrap;
     }
 
-    /* Conteúdo principal */
+    /* Tela elogios + botão */
     .main { 
       position: absolute;
       inset: 0;
@@ -104,7 +104,7 @@
       font-size: 3.8rem;
       text-align: center;
       text-shadow: 0 0 20px rgba(255,255,255,0.9), 0 0 40px #ff3366;
-      margin: 40px 0 20px;
+      margin: 40px 0 10px;
       animation: pulse-title 4s infinite ease-in-out;
     }
     @keyframes pulse-title {
@@ -112,12 +112,12 @@
       50%     { transform: scale(1.08); }
     }
 
-    /* Botão "CLIQUE AQUI" */
+    /* Botão azul "CLIQUE AQUI" */
     #nextBtn {
       display: none;
-      margin: 20px auto;
-      padding: 15px 40px;
-      font-size: 1.5rem;
+      margin: 20px auto 40px;
+      padding: 15px 50px;
+      font-size: 1.6rem;
       font-weight: bold;
       color: white;
       background: #4169e1;
@@ -125,18 +125,18 @@
       border-radius: 50px;
       cursor: pointer;
       box-shadow: 0 8px 20px rgba(65,105,225,0.5);
-      transition: transform 0.3s, box-shadow 0.3s;
+      transition: all 0.3s;
     }
     #nextBtn:hover {
       transform: scale(1.1);
       box-shadow: 0 12px 30px rgba(65,105,225,0.7);
+      background: #5a7ee6;
     }
 
     .words-container {
       position: relative;
       width: 100vw;
       height: 60vh;
-      margin-top: 40px;
     }
 
     .word {
@@ -173,7 +173,7 @@
       75%     { transform: translate(40px, 30px) rotate(12deg); }
     }
 
-    /* Tela das línguas e final */
+    /* Telas seguintes */
     .stage {
       position: absolute;
       inset: 0;
@@ -210,25 +210,25 @@
     <div class="envelope" onclick="openLetter()"></div>
   </div>
 
-  <!-- Tela elogios + botão -->
+  <!-- Tela elogios -->
   <div class="main" id="main">
     <h1 class="title">Minha Princesinha...</h1>
     <button id="nextBtn" onclick="goToLanguages()">CLIQUE AQUI</button>
     <div class="words-container" id="words"></div>
   </div>
 
-  <!-- Etapa 1: 20 línguas -->
+  <!-- 20 línguas -->
   <div class="stage" id="languagesStage">
     <div id="languagesList"></div>
   </div>
 
-  <!-- Etapa final -->
+  <!-- Tela final -->
   <div class="stage final" id="finalStage">
     <div class="heart-final">❤</div>
     <p>eu te amo, mas falar isso em só uma lingua é muito pouco.<br>você é o meu amor, e eu quero vc ao meu lado sempre ❤</p>
   </div>
 
-  <!-- Música YouTube -->
+  <!-- Música -->
   <iframe id="musicPlayer" width="0" height="0" 
     src="https://www.youtube.com/embed/J7j1WneusdY?autoplay=0&loop=1&playlist=J7j1WneusdY&mute=0" 
     frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
@@ -270,7 +270,7 @@
     }
     setInterval(createHeart, 350);
 
-    // Explosão ao abrir carta
+    // Explosão
     function explodeHearts(x, y) {
       const colors = ['❤️', '💖', '💗', '💓', '💞'];
       for (let i = 0; i < 20; i++) {
@@ -303,10 +303,13 @@
       }, 1200);
     }
 
-    // Palavras elogios
+    // Elogios (lista expandida)
     function startWords() {
       const container = document.getElementById('words');
-      const words = ["linda", "amorosa", "fofa", "carinhosa", "meiga", "companheira"];
+      const words = [
+        "linda", "amorosa", "fofa", "carinhosa", "meiga", "companheira",
+        "atraente", "graciosa", "elegante", "estilosa", "perfeitinha", "beldade", "incrível"
+      ];
 
       words.forEach((text, i) => {
         const el = document.createElement('div');
@@ -324,7 +327,7 @@
         top = Math.max(10, Math.min(90, top));
         el.style.top = top + '%';
         el.style.left = left + '%';
-        el.style.animationDelay = (i * 1.2 + Math.random() * 2) + 's';
+        el.style.animationDelay = (i * 0.8 + Math.random() * 2) + 's';
         container.appendChild(el);
       });
 
@@ -334,7 +337,7 @@
       container.appendChild(central);
     }
 
-    // Ir para línguas
+    // Próxima etapa: línguas
     function goToLanguages() {
       document.getElementById('main').style.display = 'none';
       const langStage = document.getElementById('languagesStage');
@@ -345,20 +348,21 @@
         const p = document.createElement('p');
         p.innerText = lang;
         p.style.opacity = 0;
-        p.style.animation = `fadeIn 1s forwards ${i * 0.2}s`;
+        p.style.animation = `fadeIn 1s forwards ${i * 0.15}s`;
+        p.style.margin = '10px 0';
         list.appendChild(p);
       });
 
       setTimeout(() => {
         langStage.classList.remove('visible');
         document.getElementById('finalStage').classList.add('visible');
-      }, 10000); // 10 segundos
+      }, 10000);
     }
 
-    // Fade in para línguas
+    // Estilo fadeIn
     const style = document.createElement('style');
     style.innerHTML = `
-      @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+      @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
     `;
     document.head.appendChild(style);
 
