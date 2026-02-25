@@ -56,37 +56,57 @@
     .intro.hidden { opacity: 0; pointer-events: none; }
 
     .envelope {
-      width: clamp(180px, 45vw, 220px);
-      height: clamp(110px, 28vw, 140px);
-      background: linear-gradient(to bottom, #ff4757, #c0392b);
-      border-radius: 10px 10px 50% 50% / 10% 10% 60% 60%;
+      width: clamp(200px, 50vw, 260px);
+      height: clamp(140px, 35vw, 180px);
+      background: linear-gradient(to bottom, #e74c3c, #c0392b);
+      border-radius: 12px 12px 6px 6px;
       position: relative;
       cursor: pointer;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.35);
-      transition: transform 0.35s;
+      box-shadow: 0 12px 35px rgba(0,0,0,0.4);
+      transition: transform 0.4s ease;
+      overflow: hidden;
     }
-    .envelope:active { transform: scale(1.05); }
+    .envelope:active { transform: scale(1.08) rotate(2deg); }
+
     .envelope::before {
       content: "";
       position: absolute;
-      top: -55%;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 0;
-      height: 0;
-      border-left: 50% solid transparent;
-      border-right: 50% solid transparent;
-      border-bottom: 70% solid #e74c3c;
+      top: -40%;
+      left: 0;
+      width: 100%;
+      height: 80%;
+      background: linear-gradient(to bottom, #ff6b6b, #e74c3c);
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
+      z-index: 1;
+      box-shadow: inset 0 -10px 20px rgba(0,0,0,0.3);
     }
+
     .envelope::after {
-      content: "Para minha Princesinha 💌";
+      content: "❤️";
       position: absolute;
-      bottom: -120%;
+      top: -20%;
       left: 50%;
-      transform: translateX(-50%);
-      font-size: clamp(1.3rem, 5vw, 2rem);
-      white-space: nowrap;
+      transform: translate(-50%, -50%);
+      font-size: clamp(1.8rem, 6vw, 2.8rem);
+      color: #fff;
+      text-shadow: 0 0 15px rgba(255,255,255,0.8);
+      z-index: 2;
+      background: radial-gradient(circle, #ff3366 30%, transparent 70%);
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    }
+
+    .envelope-text {
+      margin-top: 20px;
+      font-size: clamp(1.4rem, 5vw, 2.2rem);
       text-shadow: 0 2px 10px rgba(0,0,0,0.7);
+      text-align: center;
+      white-space: nowrap;
     }
 
     .main {
@@ -100,17 +120,9 @@
     }
     .main.visible { display: flex; }
 
-    .title {
-      font-size: clamp(2.4rem, 9vw, 3.6rem);
-      text-align: center;
-      text-shadow: 0 0 20px rgba(255,255,255,0.8), 0 0 40px #ff3366;
-      margin: 6vh 0 2vh;
-      line-height: 1.1;
-    }
-
     #nextBtn {
       display: none;
-      margin: 3vh auto 5vh;
+      margin: 6vh auto 5vh; /* Aumentei margem de cima para centralizar melhor sem título */
       padding: 1.2rem 3.5rem;
       font-size: clamp(1.3rem, 5vw, 1.7rem);
       font-weight: bold;
@@ -130,8 +142,8 @@
     .words-container {
       position: relative;
       width: 100%;
-      height: 55vh;
-      max-height: 500px;
+      height: 70vh; /* Aumentei altura para ocupar melhor o espaço sem título */
+      max-height: 600px;
     }
 
     .word {
@@ -217,10 +229,11 @@
 
   <div class="intro" id="intro">
     <div class="envelope" onclick="openLetter()"></div>
+    <div class="envelope-text">Para minha Princesinha 💌</div>
   </div>
 
   <div class="main" id="main">
-    <h1 class="title">Minha Princesinha...</h1>
+    <!-- Sem título aqui mais -->
     <button id="nextBtn" onclick="goToLanguages()">CLIQUE AQUI</button>
     <div class="words-container" id="words"></div>
   </div>
@@ -239,10 +252,10 @@
     <p style="margin-top: 4vh; font-size: clamp(1.2rem, 4.5vw, 1.8rem);">Ass: Daniel</p>
   </div>
 
-  <!-- Música: Pra Sempre Com Você - Jorge & Mateus (Spotify embed, sem ads visíveis) -->
-  <iframe id="spotifyPlayer" style="border-radius:12px; position:fixed; bottom:0; left:0; width:100%; height:0; opacity:0;"
-    src="https://open.spotify.com/embed/track/2KGv51jgAz8OTjNPyRryfq?utm_source=generator"
-    width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+  <!-- Música SoundCloud -->
+  <iframe id="soundcloudPlayer" width="100%" height="0" scrolling="no" frameborder="no" allow="autoplay"
+    src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/872330833&color=%23ff5500&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false">
+  </iframe>
 
   <script>
     let wordElements = [];
@@ -423,9 +436,8 @@
     document.head.appendChild(styleSheet);
 
     document.addEventListener('click', () => {
-      const player = document.getElementById('spotifyPlayer');
-      if (player) {
-        // Força autoplay após interação
+      const player = document.getElementById('soundcloudPlayer');
+      if (player && player.src.includes('auto_play=false')) {
         player.src = player.src.replace('auto_play=false', 'auto_play=true');
       }
     }, { once: true });
