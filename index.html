@@ -17,7 +17,7 @@
       touch-action: manipulation;
     }
 
-    audio { display: none; } /* Esconde o player */
+    audio { display: none; }
 
     .heart {
       position: absolute;
@@ -225,6 +225,21 @@
       animation: pulse 2s infinite;
       margin: 3vh 0;
     }
+
+    /* Botão discreto de fallback para música (só aparece se não tocar) */
+    #musicFallback {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(255,255,255,0.2);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      z-index: 999;
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -253,15 +268,20 @@
     <p style="margin-top: 4vh; font-size: clamp(1.2rem, 4.5vw, 1.8rem);">Ass: Daniel</p>
   </div>
 
-  <!-- Música nativa MP3 - sem anúncios, autoplay após toque -->
+  <!-- Áudio nativo - refatorado do zero -->
   <audio id="bgMusic" loop preload="auto">
     <source src="poesia-pra-ela.mp3" type="audio/mpeg">
     Seu navegador não suporta áudio.
   </audio>
 
+  <!-- Botão de fallback (aparece só se não tocar) -->
+  <div id="musicFallback" onclick="document.getElementById('bgMusic').play()">Tocar música</div>
+
   <script>
     let wordElements = [];
     let animationFrameId = null;
+    const music = document.getElementById('bgMusic');
+    const fallbackBtn = document.getElementById('musicFallback');
 
     const languages = [
       "Português: Eu te amo","Inglês: I love you","Espanhol: Te amo","Francês: Je t'aime",
@@ -310,6 +330,7 @@
         document.getElementById('main').classList.add('visible');
         document.getElementById('nextBtn').style.display = 'block';
         startWords();
+        playMusic(); // tenta tocar ao abrir carta
       }, 1200);
     }
 
@@ -437,34 +458,38 @@
     `;
     document.head.appendChild(styleSheet);
 
-    // Parte sonora refeita do zero - áudio nativo MP3
-    const music = document.getElementById('bgMusic');
-
-    // Função para tentar tocar a música
+    // Áudio nativo - refatorado do zero
     function playMusic() {
       if (music.paused) {
         music.play().then(() => {
-          console.log('Música tocando com sucesso!');
+          console.log('Música tocando!');
+          fallbackBtn.style.display = 'none'; // esconde botão se tocar
         }).catch(err => {
-          console.log('Erro ao tocar música:', err);
-          // Tenta novamente após interação
+          console.log('Erro ao tocar:', err);
+          fallbackBtn.style.display = 'block'; // mostra botão de fallback
         });
       }
     }
 
-    // Listener em múltiplos eventos para garantir no mobile
+    // Listener em vários eventos para mobile
     ['click', 'touchstart', 'touchend'].forEach(evt => {
       document.addEventListener(evt, playMusic, { passive: true });
     });
 
-    // Tenta tocar automaticamente após carregar (fallback)
-    music.addEventListener('loadedmetadata', () => {
-      setTimeout(playMusic, 1000);
-    });
-
-    // Se o usuário interagir com o envelope ou botão, tenta tocar imediatamente
+    // Tenta tocar ao abrir carta ou botão
     document.querySelector('.envelope').addEventListener('click', playMusic);
     document.getElementById('nextBtn').addEventListener('click', playMusic);
+
+    // Tenta a cada 4 segundos até tocar (fallback)
+    const musicRetry = setInterval(() => {
+      playMusic();
+      if (!music.paused) clearInterval(musicRetry);
+    }, 4000);
+
+    // Se falhar por muito tempo, mostra botão de fallback
+    setTimeout(() => {
+      if (music.paused) fallbackBtn.style.display = 'block';
+    }, 8000);
   </script>
 </body>
 </html>
