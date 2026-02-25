@@ -17,6 +17,8 @@
       touch-action: manipulation;
     }
 
+    audio { display: none; } /* Esconde o player */
+
     .heart {
       position: absolute;
       top: -10vh;
@@ -251,10 +253,11 @@
     <p style="margin-top: 4vh; font-size: clamp(1.2rem, 4.5vw, 1.8rem);">Ass: Daniel</p>
   </div>
 
-  <!-- Música: Poesia Pra Ela - João Napoli (SoundCloud oficial) -->
-  <iframe id="soundcloudPlayer" width="100%" height="0" scrolling="no" frameborder="no" allow="autoplay"
-    src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/872330833&color=%23ff5500&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false">
-  </iframe>
+  <!-- Música nativa MP3 - sem anúncios, autoplay após toque -->
+  <audio id="bgMusic" loop preload="auto">
+    <source src="poesia-pra-ela.mp3" type="audio/mpeg">
+    Seu navegador não suporta áudio.
+  </audio>
 
   <script>
     let wordElements = [];
@@ -434,33 +437,34 @@
     `;
     document.head.appendChild(styleSheet);
 
-    // Listener SUPER robusto para iniciar música do SoundCloud
-    function tryPlayMusic() {
-      const player = document.getElementById('soundcloudPlayer');
-      if (player) {
-        let src = player.src;
-        if (src.includes('auto_play=false')) {
-          src = src.replace('auto_play=false', 'auto_play=true');
-          player.src = src;
-          console.log('Tentando iniciar Poesia Pra Ela...');
-        }
+    // Parte sonora refeita do zero - áudio nativo MP3
+    const music = document.getElementById('bgMusic');
+
+    // Função para tentar tocar a música
+    function playMusic() {
+      if (music.paused) {
+        music.play().then(() => {
+          console.log('Música tocando com sucesso!');
+        }).catch(err => {
+          console.log('Erro ao tocar música:', err);
+          // Tenta novamente após interação
+        });
       }
     }
 
-    // Tenta em qualquer interação (click ou touch)
-    ['click', 'touchstart', 'touchend'].forEach(event => {
-      document.addEventListener(event, tryPlayMusic, { passive: true });
+    // Listener em múltiplos eventos para garantir no mobile
+    ['click', 'touchstart', 'touchend'].forEach(evt => {
+      document.addEventListener(evt, playMusic, { passive: true });
     });
 
-    // Tenta novamente a cada 3 segundos até tocar (fallback para mobile teimoso)
-    const musicRetryInterval = setInterval(() => {
-      tryPlayMusic();
-      // Para o intervalo após 30s para não ficar rodando pra sempre
-      if (Date.now() - window.startTime > 30000) clearInterval(musicRetryInterval);
-    }, 3000);
+    // Tenta tocar automaticamente após carregar (fallback)
+    music.addEventListener('loadedmetadata', () => {
+      setTimeout(playMusic, 1000);
+    });
 
-    // Marca o tempo de início para o timeout
-    window.startTime = Date.now();
+    // Se o usuário interagir com o envelope ou botão, tenta tocar imediatamente
+    document.querySelector('.envelope').addEventListener('click', playMusic);
+    document.getElementById('nextBtn').addEventListener('click', playMusic);
   </script>
 </body>
 </html>
