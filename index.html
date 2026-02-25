@@ -17,6 +17,7 @@
       touch-action: manipulation;
     }
 
+    /* Corações caindo */
     .heart {
       position: absolute;
       top: -10vh;
@@ -222,13 +223,14 @@
     <p>eu te amo, mas falar isso em só uma lingua é muito pouco.<br>você é o meu amor, e eu quero vc ao meu lado sempre ❤</p>
   </div>
 
-  <!-- Música sem ads: SoundCloud oficial (player limpo, autoplay após interação) -->
-  <iframe width="100%" height="0" scrolling="no" frameborder="no" allow="autoplay"
+  <!-- Música SoundCloud (sem ads visíveis) -->
+  <iframe id="soundcloudPlayer" width="100%" height="0" scrolling="no" frameborder="no" allow="autoplay"
     src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/872330833&color=%23ff5500&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false">
   </iframe>
 
   <script>
     let wordElements = [];
+    let animationFrameId = null; // para parar o loop quando sair da tela
 
     function createHeart() {
       for (let i = 0; i < 3; i++) {
@@ -268,8 +270,6 @@
         document.getElementById('main').classList.add('visible');
         document.getElementById('nextBtn').style.display = 'block';
         startWords();
-        // Tenta iniciar música do SoundCloud após interação (autoplay bloqueado sem isso)
-        document.querySelector('iframe[src*="soundcloud"]').src += '&auto_play=true';
       }, 1200);
     }
 
@@ -286,7 +286,7 @@
         el.innerText = text;
         el.x = 8 + Math.random() * 84;
         el.y = 12 + Math.random() * 68;
-        el.vx = (Math.random() - 0.5) * 1.4;  // velocidade inicial maior para movimento contínuo
+        el.vx = (Math.random() - 0.5) * 1.4;
         el.vy = (Math.random() - 0.5) * 1.4;
         el.style.left = el.x + '%';
         el.style.top  = el.y + '%';
@@ -299,11 +299,12 @@
       central.innerText = "amor da minha vida";
       container.appendChild(central);
 
-      requestAnimationFrame(updateWords);
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      animationFrameId = requestAnimationFrame(updateWords);
     }
 
     function updateWords() {
-      const minDist = 18; // hitbox para repulsão
+      const minDist = 18;
 
       for (let i = 0; i < wordElements.length; i++) {
         const a = wordElements[i];
@@ -311,7 +312,6 @@
         a.x += a.vx;
         a.y += a.vy;
 
-        // Repulsão
         for (let j = i + 1; j < wordElements.length; j++) {
           const b = wordElements[j];
           const dx = a.x - b.x;
@@ -329,19 +329,16 @@
           }
         }
 
-        // Limites
         if (a.x < 6 || a.x > 94) a.vx *= -0.9;
         if (a.y < 10 || a.y > 85) a.vy *= -0.9;
 
         a.x = Math.max(6, Math.min(94, a.x));
         a.y = Math.max(10, Math.min(85, a.y));
 
-        // Atrito reduzido (desacelera devagar)
         a.vx *= 0.98;
         a.vy *= 0.98;
 
-        // Empurrão aleatório sutil para movimento contínuo
-        if (Math.random() < 0.008) {  // chance baixa por frame
+        if (Math.random() < 0.008) {
           a.vx += (Math.random() - 0.5) * 0.5;
           a.vy += (Math.random() - 0.5) * 0.5;
         }
@@ -350,7 +347,44 @@
         a.style.top  = a.y + '%';
       }
 
-      requestAnimationFrame(updateWords);
+      animationFrameId = requestAnimationFrame(updateWords);
+    }
+
+    function goToLanguages() {
+      try {
+        // Para o loop de animação das palavras
+        if (animationFrameId) {
+          cancelAnimationFrame(animationFrameId);
+          animationFrameId = null;
+        }
+
+        // Remove todos os corações caindo (para limpar a tela)
+        document.querySelectorAll('.heart').forEach(h => h.remove());
+
+        document.getElementById('main').style.display = 'none';
+        const stage = document.getElementById('languagesStage');
+        stage.classList.add('visible');
+
+        const list = document.getElementById('languagesList');
+        list.innerHTML = '';
+        languages.forEach((lang, i) => {
+          const p = document.createElement('p');
+          p.textContent = lang;
+          p.style.opacity = 0;
+          p.style.animation = `fadeIn 1s forwards ${i * 0.12}s`;
+          list.appendChild(p);
+        });
+
+        setTimeout(() => {
+          stage.classList.remove('visible');
+          document.getElementById('finalStage').classList.add('visible');
+        }, 10000);
+      } catch (error) {
+        console.error('Erro na transição:', error);
+        // Se der erro, força mostrar a tela final como fallback
+        document.getElementById('main').style.display = 'none';
+        document.getElementById('finalStage').classList.add('visible');
+      }
     }
 
     const languages = [
@@ -361,27 +395,6 @@
       "Grego: S'agapo","Húngaro: Szeretlek","Finlandês: Minä rakastan sinua","Havaiano: Aloha wau iā ʻoe"
     ];
 
-    function goToLanguages() {
-      document.getElementById('main').style.display = 'none';
-      const stage = document.getElementById('languagesStage');
-      stage.classList.add('visible');
-
-      const list = document.getElementById('languagesList');
-      list.innerHTML = '';
-      languages.forEach((lang, i) => {
-        const p = document.createElement('p');
-        p.textContent = lang;
-        p.style.opacity = 0;
-        p.style.animation = `fadeIn 1s forwards ${i * 0.12}s`;
-        list.appendChild(p);
-      });
-
-      setTimeout(() => {
-        stage.classList.remove('visible');
-        document.getElementById('finalStage').classList.add('visible');
-      }, 10000);
-    }
-
     const styleSheet = document.createElement('style');
     styleSheet.textContent = `
       @keyframes fadeIn { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
@@ -390,7 +403,9 @@
 
     document.addEventListener('click', () => {
       const player = document.querySelector('iframe[src*="soundcloud"]');
-      if (player) player.src = player.src.replace('auto_play=false', 'auto_play=true');
+      if (player && player.src.includes('auto_play=false')) {
+        player.src = player.src.replace('auto_play=false', 'auto_play=true');
+      }
     }, { once: true });
   </script>
 </body>
