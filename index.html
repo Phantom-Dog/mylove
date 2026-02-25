@@ -450,7 +450,7 @@
           const countdownElem = document.getElementById('countdown');
           const countdownInterval = setInterval(() => {
             countdown--;
-            countdownElem.textContent = `Próxima surpresa em: ${countdown} segundos`;
+            countdownElem.textContent = ` ${countdown} segundos`;
             if (countdown <= 0) {
               clearInterval(countdownInterval);
               document.getElementById('thankYouStage').classList.remove('visible');
