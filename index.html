@@ -2,51 +2,43 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>Para minha Princesinha 💕</title>
   <style>
-    * { margin:0; padding:0; box-sizing:border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
-      height: 100vh;
+      height: 100dvh;
+      min-height: -webkit-fill-available;
       background: linear-gradient(135deg, #ffe4e1, #ffc1cc, #ff9aa2, #ff758c);
-      font-family: 'Georgia', 'Times New Roman', serif;
-      color: #fff;
+      font-family: 'Georgia', serif;
+      color: white;
       overflow: hidden;
       position: relative;
-      transition: background 2s;
+      touch-action: manipulation;
     }
-    /* Corações caindo (reduzido ~35%) */
+
+    /* Corações caindo – menos densos em mobile */
     .heart {
       position: absolute;
-      top: -15vh;
-      font-size: 1.8rem;
-      color: #ff0000;
+      top: -10vh;
+      font-size: clamp(1rem, 4vw, 1.8rem);
       pointer-events: none;
-      user-select: none;
       animation: fall linear infinite;
-      opacity: 0.85;
+      opacity: 0.8;
     }
     @keyframes fall {
-      0% { transform: translateY(0) translateX(0) rotate(0deg); }
+      0%   { transform: translateY(0) translateX(0) rotate(0deg); }
       100% { transform: translateY(120vh) translateX(60vw) rotate(720deg); }
-    }
-    /* Explosão */
-    .explosion-heart {
-      position: absolute;
-      font-size: 2.5rem;
-      pointer-events: none;
-      animation: explode 1.2s forwards;
-      z-index: 20;
-    }
-    @keyframes explode {
-      0% { transform: scale(0.5) translate(0,0); opacity: 1; }
-      50% { transform: scale(1.8) translate(var(--dx), var(--dy)); opacity: 1; }
-      100% { transform: scale(0) translate(var(--dx), var(--dy)); opacity: 0; }
     }
 
     /* Tela inicial */
     .intro {
-      position: absolute;
+      position: fixed;
       inset: 0;
       display: flex;
       flex-direction: column;
@@ -56,189 +48,191 @@
       transition: opacity 1.2s ease;
     }
     .intro.hidden { opacity: 0; pointer-events: none; }
+
     .envelope {
-      width: 220px;
-      height: 140px;
+      width: clamp(180px, 45vw, 220px);
+      height: clamp(110px, 28vw, 140px);
       background: linear-gradient(to bottom, #ff4757, #c0392b);
       border-radius: 10px 10px 50% 50% / 10% 10% 60% 60%;
       position: relative;
       cursor: pointer;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-      transition: transform 0.4s;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.35);
+      transition: transform 0.35s;
     }
-    .envelope:hover { transform: scale(1.08); }
+    .envelope:active { transform: scale(1.05); }
     .envelope::before {
       content: "";
       position: absolute;
-      top: -60px; left: 50%; transform: translateX(-50%);
-      width: 0; height: 0;
-      border-left: 110px solid transparent;
-      border-right: 110px solid transparent;
-      border-bottom: 80px solid #e74c3c;
+      top: -55%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 50% solid transparent;
+      border-right: 50% solid transparent;
+      border-bottom: 70% solid #e74c3c;
       z-index: -1;
     }
     .envelope::after {
       content: "Para minha Princesinha 💌";
       position: absolute;
-      bottom: -50px; left: 50%; transform: translateX(-50%);
-      font-size: 2rem;
-      color: #fff;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+      bottom: -120%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: clamp(1.3rem, 5vw, 2rem);
       white-space: nowrap;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.7);
     }
 
-    /* Tela elogios */
+    /* Tela principal (elogios) */
     .main {
-      position: absolute;
+      position: fixed;
       inset: 0;
       display: none;
       flex-direction: column;
-      justify-content: flex-start;
       align-items: center;
-      padding: 20px;
+      padding: 2vh 4vw;
+      overflow-y: auto;
     }
     .main.visible { display: flex; }
+
     .title {
-      font-size: 3.8rem;
+      font-size: clamp(2.4rem, 9vw, 3.6rem);
       text-align: center;
-      text-shadow: 0 0 20px rgba(255,255,255,0.9), 0 0 40px #ff3366;
-      margin: 60px 0 20px;
-      animation: pulse-title 4s infinite ease-in-out;
+      text-shadow: 0 0 20px rgba(255,255,255,0.8), 0 0 40px #ff3366;
+      margin: 6vh 0 2vh;
+      line-height: 1.1;
     }
-    @keyframes pulse-title {
-      0%,100% { transform: scale(1); }
-      50% { transform: scale(1.08); }
-    }
+
     #nextBtn {
       display: none;
-      margin: 30px auto 50px;
-      padding: 18px 60px;
-      font-size: 1.7rem;
+      margin: 3vh auto 5vh;
+      padding: 1.2rem 3.5rem;
+      font-size: clamp(1.3rem, 5vw, 1.7rem);
       font-weight: bold;
       color: white;
       background: #7d3cff;
       border: none;
-      border-radius: 60px;
+      border-radius: 3rem;
       cursor: pointer;
-      box-shadow: 0 10px 25px rgba(125, 60, 255, 0.5);
-      transition: all 0.3s;
+      box-shadow: 0 6px 20px rgba(125,60,255,0.5);
+      transition: all 0.25s;
     }
-    #nextBtn:hover {
-      transform: scale(1.12);
-      box-shadow: 0 15px 35px rgba(125, 60, 255, 0.7);
-      background: #9b6aff;
+    #nextBtn:active {
+      transform: scale(0.96);
+      box-shadow: 0 4px 12px rgba(125,60,255,0.4);
     }
+
     .words-container {
       position: relative;
-      width: 100vw;
-      height: 60vh;
+      width: 100%;
+      height: 55vh;
+      max-height: 500px;
     }
+
     .word {
       position: absolute;
-      font-size: 2.2rem;
+      font-size: clamp(1.3rem, 4.5vw, 2.2rem);
       font-weight: bold;
-      color: #ffffff;
-      text-shadow: 0 0 15px rgba(0,0,0,0.6), 0 0 30px #ff3366;
+      color: white;
+      text-shadow: 0 0 12px rgba(0,0,0,0.6), 0 0 25px #ff3366;
       pointer-events: none;
       user-select: none;
+      white-space: nowrap;
     }
+
     .word.central {
-      font-size: 4rem;
-      color: #ffffff;
-      text-shadow: 0 0 30px #ffffff, 0 0 60px #ff69b4;
+      font-size: clamp(2.2rem, 7vw, 4rem);
+      text-shadow: 0 0 25px white, 0 0 50px #ff69b4;
       animation: pulse 2.8s infinite;
       pointer-events: auto;
       cursor: pointer;
       left: 50%;
       top: 50%;
       transform: translate(-50%, -50%);
-      white-space: nowrap;
       z-index: 10;
     }
     @keyframes pulse {
-      0%,100% { transform: translate(-50%, -50%) scale(1); }
-      50% { transform: translate(-50%, -50%) scale(1.10); }
+      0%, 100% { transform: translate(-50%, -50%) scale(1); }
+      50%      { transform: translate(-50%, -50%) scale(1.08); }
     }
 
-    /* === NOVA PARTE: 20 línguas em DUAS COLUNAS === */
+    /* Telas de línguas e final */
     .stage {
-      position: absolute;
+      position: fixed;
       inset: 0;
       display: none;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      padding: 20px;
+      padding: 4vh 6vw;
       text-align: center;
-      font-size: 2.1rem;
+      font-size: clamp(1.6rem, 5vw, 2.1rem);
       opacity: 0;
-      transition: opacity 1.5s;
+      transition: opacity 1.2s;
     }
-    .stage.visible {
-      display: flex;
-      opacity: 1;
-    }
+    .stage.visible { display: flex; opacity: 1; }
+
     #languagesList {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);   /* DUAS COLUNAS */
-      gap: 18px 45px;
-      max-width: 920px;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem 2rem;
+      width: 100%;
+      max-width: 800px;
       text-align: left;
     }
     #languagesList p {
       margin: 0;
-      white-space: nowrap;
+      font-size: clamp(1.3rem, 4vw, 1.8rem);
     }
 
     .stage.final {
-      font-size: 2.8rem;
-      line-height: 1.5;
+      font-size: clamp(1.8rem, 5.5vw, 2.6rem);
       background: linear-gradient(135deg, #ff758c, #ff3366, #c0392b);
     }
     .heart-final {
-      font-size: 4rem;
+      font-size: clamp(3rem, 12vw, 5rem);
       animation: pulse 2s infinite;
-      margin: 20px 0;
+      margin: 3vh 0;
     }
   </style>
 </head>
 <body>
 
-  <!-- Tela inicial -->
   <div class="intro" id="intro">
     <div class="envelope" onclick="openLetter()"></div>
   </div>
 
-  <!-- Tela elogios -->
   <div class="main" id="main">
     <h1 class="title">Minha Princesinha...</h1>
     <button id="nextBtn" onclick="goToLanguages()">CLIQUE AQUI</button>
     <div class="words-container" id="words"></div>
   </div>
 
-  <!-- 20 línguas em duas colunas -->
   <div class="stage" id="languagesStage">
     <div id="languagesList"></div>
   </div>
 
-  <!-- Tela final -->
   <div class="stage final" id="finalStage">
     <div class="heart-final">❤</div>
     <p>eu te amo, mas falar isso em só uma lingua é muito pouco.<br>você é o meu amor, e eu quero vc ao meu lado sempre ❤</p>
   </div>
 
   <!-- Música -->
-  <iframe id="musicPlayer" width="0" height="0"
-    src="https://www.youtube.com/embed/J7j1WneusdY?autoplay=0&loop=1&playlist=J7j1WneusdY&mute=0"
-    frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+  <iframe id="musicPlayer" width="0" height="0" src="https://www.youtube.com/embed/J7j1WneusdY?autoplay=0&loop=1&playlist=J7j1WneusdY&mute=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
   <script>
     const languages = [
-      "Português: Eu te amo","Inglês: I love you","Espanhol: Te amo","Francês: Je t'aime",
-      "Alemão: Ich liebe dich","Italiano: Ti amo","Japonês: Aishiteru","Coreano: Saranghae",
-      "Chinês: Wǒ ài nǐ","Russo: Ya tebya lyublyu","Árabe: Uhibbuk","Hindi: Main tumse pyar karta hoon",
-      "Polonês: Kocham cię","Turco: Seni seviyorum","Sueco: Jag älskar dig","Holandês: Ik hou van jou",
-      "Grego: S'agapo","Húngaro: Szeretlek","Finlandês: Minä rakastan sinua","Havaiano: Aloha wau iā ʻoe"
+      "Português: Eu te amo", "Inglês: I love you",
+      "Espanhol: Te amo", "Francês: Je t'aime",
+      "Alemão: Ich liebe dich", "Italiano: Ti amo",
+      "Japonês: Aishiteru", "Coreano: Saranghae",
+      "Chinês: Wǒ ài nǐ", "Russo: Ya tebya lyublyu",
+      "Árabe: Uhibbuk", "Hindi: Main tumse pyar karta hoon",
+      "Polonês: Kocham cię", "Turco: Seni seviyorum",
+      "Sueco: Jag älskar dig", "Holandês: Ik hou van jou",
+      "Grego: S'agapo", "Húngaro: Szeretlek",
+      "Finlandês: Minä rakastan sinua", "Havaiano: Aloha wau iā ʻoe"
     ];
 
     function createHeart() {
@@ -256,16 +250,16 @@
     setInterval(createHeart, 170);
 
     function explodeHearts(x, y) {
-      const colors = ['❤️', '💖', '💗', '💓', '💞'];
+      const colors = ['❤️','💖','💗','💓','💞'];
       for (let i = 0; i < 20; i++) {
         const h = document.createElement('div');
         h.classList.add('explosion-heart');
-        h.innerHTML = colors[Math.floor(Math.random() * colors.length)];
+        h.innerHTML = colors[Math.floor(Math.random()*5)];
         h.style.left = x + 'px';
         h.style.top = y + 'px';
-        h.style.setProperty('--dx', (Math.random() - 0.5) * 300 + 'px');
-        h.style.setProperty('--dy', (Math.random() - 0.5) * 300 + 'px');
-        h.style.animationDelay = Math.random() * 0.3 + 's';
+        h.style.setProperty('--dx', (Math.random()-0.5)*300 + 'px');
+        h.style.setProperty('--dy', (Math.random()-0.5)*300 + 'px');
+        h.style.animationDelay = Math.random()*0.3 + 's';
         document.body.appendChild(h);
         setTimeout(() => h.remove(), 1500);
       }
@@ -273,13 +267,13 @@
 
     function openLetter() {
       const rect = document.querySelector('.envelope').getBoundingClientRect();
-      explodeHearts(rect.left + rect.width / 2, rect.top + rect.height / 2);
+      explodeHearts(rect.left + rect.width/2, rect.top + rect.height/2);
       document.getElementById('intro').classList.add('hidden');
       setTimeout(() => {
         document.getElementById('main').classList.add('visible');
         document.getElementById('nextBtn').style.display = 'block';
         startWords();
-        document.getElementById('musicPlayer').src = document.getElementById('musicPlayer').src.replace('autoplay=0', 'autoplay=1');
+        document.getElementById('musicPlayer').src = document.getElementById('musicPlayer').src.replace('autoplay=0','autoplay=1');
       }, 1200);
     }
 
@@ -287,17 +281,16 @@
       const container = document.getElementById('words');
       container.innerHTML = '';
       const words = ["linda","amorosa","fofa","carinhosa","meiga","companheira","atraente","graciosa","elegante","estilosa","perfeitinha","beldade","incrível"];
+
       words.forEach(text => {
         const el = document.createElement('div');
         el.classList.add('word');
         el.innerText = text;
         let top = 15 + Math.random() * 70;
         let left = 5 + Math.random() * 90;
-        const distX = Math.abs(left - 50);
-        const distY = Math.abs(top - 50);
-        if (distX < 30 && distY < 20) {
-          left += (left > 50 ? 35 : -35);
-          top += (top > 50 ? 25 : -25);
+        if (Math.abs(left - 50) < 30 && Math.abs(top - 50) < 20) {
+          left += left > 50 ? 35 : -35;
+          top += top > 50 ? 25 : -25;
         }
         left = Math.max(5, Math.min(95, left));
         top = Math.max(10, Math.min(90, top));
@@ -306,6 +299,7 @@
         el.style.animationDelay = Math.random() * 3 + 's';
         container.appendChild(el);
       });
+
       const central = document.createElement('div');
       central.classList.add('word', 'central');
       central.innerText = "amor da minha vida";
@@ -314,35 +308,35 @@
 
     function goToLanguages() {
       document.getElementById('main').style.display = 'none';
-      const langStage = document.getElementById('languagesStage');
-      langStage.classList.add('visible');
+      const stage = document.getElementById('languagesStage');
+      stage.classList.add('visible');
 
       const list = document.getElementById('languagesList');
       list.innerHTML = '';
       languages.forEach((lang, i) => {
         const p = document.createElement('p');
-        p.innerText = lang;
+        p.textContent = lang;
         p.style.opacity = 0;
         p.style.animation = `fadeIn 1s forwards ${i * 0.12}s`;
         list.appendChild(p);
       });
 
       setTimeout(() => {
-        langStage.classList.remove('visible');
+        stage.classList.remove('visible');
         document.getElementById('finalStage').classList.add('visible');
       }, 10000);
     }
 
-    const style = document.createElement('style');
-    style.innerHTML = `
-      @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    const styleSheet = document.createElement('style');
+    styleSheet.textContent = `
+      @keyframes fadeIn { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
     `;
-    document.head.appendChild(style);
+    document.head.appendChild(styleSheet);
 
     document.addEventListener('click', () => {
       const player = document.getElementById('musicPlayer');
       if (player.src.includes('autoplay=0')) {
-        player.src = player.src.replace('autoplay=0', 'autoplay=1');
+        player.src = player.src.replace('autoplay=0','autoplay=1');
       }
     }, { once: true });
   </script>
