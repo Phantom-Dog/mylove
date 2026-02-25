@@ -8,11 +8,13 @@
     * { margin:0; padding:0; box-sizing:border-box; }
     body {
       height: 100dvh;
+      min-height: -webkit-fill-available;
       background: linear-gradient(135deg, #ffe4e1, #ffc1cc, #ff9aa2, #ff758c);
       font-family: 'Georgia', serif;
       color: white;
       overflow: hidden;
       position: relative;
+      touch-action: manipulation;
     }
 
     audio { display: none; }
@@ -31,59 +33,232 @@
       box-shadow: 0 4px 15px rgba(0,0,0,0.3);
       z-index: 999;
       cursor: pointer;
+      display: none;
     }
 
-    /* resto do seu CSS anterior (envelope, palavras, etc.) */
-    .heart { position: absolute; top: -10vh; font-size: clamp(1rem, 4vw, 1.8rem); pointer-events: none; animation: fall linear infinite; opacity: 0.8; }
-    @keyframes fall { 0% { transform: translateY(0) translateX(0) rotate(0deg); } 100% { transform: translateY(120vh) translateX(60vw) rotate(720deg); } }
+    .heart {
+      position: absolute;
+      top: -10vh;
+      font-size: clamp(1rem, 4vw, 1.8rem);
+      pointer-events: none;
+      animation: fall linear infinite;
+      opacity: 0.8;
+    }
+    @keyframes fall {
+      0%   { transform: translateY(0) translateX(0) rotate(0deg); }
+      100% { transform: translateY(120vh) translateX(60vw) rotate(720deg); }
+    }
 
-    .intro, .main, .stage { /* seu CSS anterior */ }
-    /* ... (mantenha o resto do CSS que você já tinha) ... */
+    .explosion-heart {
+      position: absolute;
+      font-size: 2.5rem;
+      pointer-events: none;
+      animation: explode 1.2s forwards;
+      z-index: 20;
+    }
+    @keyframes explode {
+      0% { transform: scale(0.5) translate(0,0); opacity: 1; }
+      50% { transform: scale(1.8) translate(var(--dx), var(--dy)); opacity: 1; }
+      100% { transform: scale(0) translate(var(--dx), var(--dy)); opacity: 0; }
+    }
+
+    .intro {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+      transition: opacity 1.2s ease;
+    }
+    .intro.hidden { opacity: 0; pointer-events: none; }
+
+    .envelope {
+      width: clamp(200px, 50vw, 260px);
+      height: clamp(140px, 35vw, 180px);
+      background: linear-gradient(to bottom, #e74c3c, #c0392b);
+      border-radius: 12px 12px 6px 6px;
+      position: relative;
+      cursor: pointer;
+      box-shadow: 0 12px 35px rgba(0,0,0,0.4);
+      transition: transform 0.4s ease;
+      overflow: hidden;
+    }
+    .envelope:active { transform: scale(1.08) rotate(2deg); }
+
+    .envelope::before {
+      content: "";
+      position: absolute;
+      top: -40%;
+      left: 0;
+      width: 100%;
+      height: 80%;
+      background: linear-gradient(to bottom, #ff6b6b, #e74c3c);
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
+      z-index: 1;
+      box-shadow: inset 0 -10px 20px rgba(0,0,0,0.3);
+    }
+
+    .envelope::after {
+      content: "❤️";
+      position: absolute;
+      top: -20%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: clamp(1.8rem, 6vw, 2.8rem);
+      color: #fff;
+      text-shadow: 0 0 15px rgba(255,255,255,0.8);
+      z-index: 2;
+      background: radial-gradient(circle, #ff3366 30%, transparent 70%);
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    }
+
+    .envelope-text {
+      margin-top: 20px;
+      font-size: clamp(1.4rem, 5vw, 2.2rem);
+      text-shadow: 0 2px 10px rgba(0,0,0,0.7);
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .main {
+      position: fixed;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      padding: 2vh 4vw;
+      overflow: hidden;
+    }
+    .main.visible { display: flex; }
+
+    #nextBtn {
+      display: none;
+      margin: 6vh auto 5vh;
+      padding: 1.2rem 3.5rem;
+      font-size: clamp(1.3rem, 5vw, 1.7rem);
+      font-weight: bold;
+      color: white;
+      background: #7d3cff;
+      border: none;
+      border-radius: 3rem;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(125,60,255,0.5);
+      transition: all 0.25s;
+    }
+    #nextBtn:active {
+      transform: scale(0.96);
+      box-shadow: 0 4px 12px rgba(125,60,255,0.4);
+    }
+
+    .words-container {
+      position: relative;
+      width: 100%;
+      height: 70vh;
+      max-height: 600px;
+    }
+
+    .word {
+      position: absolute;
+      font-size: clamp(1.3rem, 4.5vw, 2.2rem);
+      font-weight: bold;
+      color: white;
+      text-shadow: 0 0 12px rgba(0,0,0,0.6), 0 0 25px #ff3366;
+      pointer-events: none;
+      user-select: none;
+      white-space: nowrap;
+      transition: transform 0.1s linear;
+    }
+
+    .word.central {
+      font-size: clamp(2.2rem, 7vw, 4rem);
+      text-shadow: 0 0 25px white, 0 0 50px #ff69b4;
+      animation: pulse 2.8s infinite;
+      pointer-events: auto;
+      cursor: pointer;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); }
+      50%      { transform: translate(-50%, -50%) scale(1.08); }
+    }
+
+    .stage {
+      position: fixed;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 4vh 6vw;
+      text-align: center;
+      font-size: clamp(1.6rem, 5vw, 2.1rem);
+      opacity: 0;
+      transition: opacity 1.2s;
+    }
+    .stage.visible { display: flex; opacity: 1; }
+
+    #languagesList {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem 2rem;
+      width: 100%;
+      max-width: 800px;
+      text-align: left;
+    }
+    #languagesList p {
+      margin: 0;
+      font-size: clamp(1.3rem, 4vw, 1.8rem);
+    }
+
+    .stage.final, .stage.thankYou {
+      font-size: clamp(1.8rem, 5.5vw, 2.6rem);
+      background: linear-gradient(135deg, #ff758c, #ff3366, #c0392b);
+      line-height: 1.6;
+    }
+    .stage.thankYou {
+      font-size: clamp(1.1rem, 4.2vw, 1.5rem);
+      line-height: 1.45;
+      padding: 4vh 8vw 10vh;
+      overflow-y: auto;
+    }
+    .stage.thankYou p {
+      max-width: 90%;
+      margin: 2vh 0;
+      text-align: center;
+    }
+    .heart-final {
+      font-size: clamp(3rem, 12vw, 5rem);
+      animation: pulse 2s infinite;
+      margin: 3vh 0;
+    }
   </style>
 </head>
 <body>
-
-  <!-- seu HTML anterior (envelope, páginas, etc.) -->
 
   <div class="intro" id="intro">
     <div class="envelope" onclick="openLetter()"></div>
     <div class="envelope-text">Para minha Princesinha 💌</div>
   </div>
 
-  <!-- ... resto do seu HTML (main, stages, etc.) ... -->
+  <div class="main" id="main">
+    <button id="nextBtn" onclick="goToLanguages()">CLIQUE AQUI</button>
+    <div class="words-container" id="words"></div>
+  </div>
 
-  <!-- Áudio nativo -->
-  <audio id="bgMusic" loop preload="auto">
-    <source src="poesia-pra-ela.mp3" type="audio/mpeg">
-  </audio>
+  <div class="stage" id="languagesStage">
+    <div id="languagesList"></div>
+  </div>
 
-  <!-- Botão de emergência -->
-  <button id="musicBtn" onclick="document.getElementById('bgMusic').play()">🎵 Tocar Música</button>
-
-  <script>
-    const music = document.getElementById('bgMusic');
-
-    function playMusic() {
-      music.play().then(() => {
-        console.log("✅ Música tocando!");
-        document.getElementById('musicBtn').style.display = 'none';
-      }).catch(e => {
-        console.log("❌ Erro ao tocar:", e);
-        document.getElementById('musicBtn').style.display = 'block';
-      });
-    }
-
-    // Tenta tocar em qualquer toque/clique
-    document.addEventListener('click', playMusic, { passive: true });
-    document.addEventListener('touchstart', playMusic, { passive: true });
-
-    // Tenta novamente a cada 3 segundos até tocar
-    setInterval(() => {
-      if (music.paused) playMusic();
-    }, 3000);
-
-    // Tenta tocar quando abrir o envelope
-    document.querySelector('.envelope').addEventListener('click', playMusic);
-  </script>
-</body>
-</html>
+  <div class="stage final" id="finalStage">
+    <div class
