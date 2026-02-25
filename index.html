@@ -434,7 +434,7 @@
     `;
     document.head.appendChild(styleSheet);
 
-    // Listener robusto para iniciar música do SoundCloud
+    // Listener SUPER robusto para iniciar música do SoundCloud
     function tryPlayMusic() {
       const player = document.getElementById('soundcloudPlayer');
       if (player) {
@@ -442,17 +442,25 @@
         if (src.includes('auto_play=false')) {
           src = src.replace('auto_play=false', 'auto_play=true');
           player.src = src;
-          console.log('Tentando iniciar música...');
+          console.log('Tentando iniciar Poesia Pra Ela...');
         }
       }
     }
 
-    // Tenta iniciar em qualquer clique/tap na página
-    document.addEventListener('click', tryPlayMusic, { once: false });
-    document.addEventListener('touchstart', tryPlayMusic, { once: false, passive: true });
+    // Tenta em qualquer interação (click ou touch)
+    ['click', 'touchstart', 'touchend'].forEach(event => {
+      document.addEventListener(event, tryPlayMusic, { passive: true });
+    });
 
-    // Tenta novamente após 2s (fallback para alguns navegadores mobile)
-    setTimeout(tryPlayMusic, 2000);
+    // Tenta novamente a cada 3 segundos até tocar (fallback para mobile teimoso)
+    const musicRetryInterval = setInterval(() => {
+      tryPlayMusic();
+      // Para o intervalo após 30s para não ficar rodando pra sempre
+      if (Date.now() - window.startTime > 30000) clearInterval(musicRetryInterval);
+    }, 3000);
+
+    // Marca o tempo de início para o timeout
+    window.startTime = Date.now();
   </script>
 </body>
 </html>
