@@ -5,12 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>Para minha Princesinha 💕</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    * { margin:0; padding:0; box-sizing:border-box; }
     body {
       height: 100dvh;
       min-height: -webkit-fill-available;
@@ -22,7 +17,6 @@
       touch-action: manipulation;
     }
 
-    /* Corações caindo */
     .heart {
       position: absolute;
       top: -10vh;
@@ -36,7 +30,6 @@
       100% { transform: translateY(120vh) translateX(60vw) rotate(720deg); }
     }
 
-    /* Explosão */
     .explosion-heart {
       position: absolute;
       font-size: 2.5rem;
@@ -50,7 +43,6 @@
       100% { transform: scale(0) translate(var(--dx), var(--dy)); opacity: 0; }
     }
 
-    /* Tela inicial */
     .intro {
       position: fixed;
       inset: 0;
@@ -97,7 +89,6 @@
       text-shadow: 0 2px 10px rgba(0,0,0,0.7);
     }
 
-    /* Tela principal (elogios) */
     .main {
       position: fixed;
       inset: 0;
@@ -152,7 +143,7 @@
       pointer-events: none;
       user-select: none;
       white-space: nowrap;
-      transition: transform 0.08s linear;
+      transition: transform 0.1s linear;
     }
 
     .word.central {
@@ -171,7 +162,6 @@
       50%      { transform: translate(-50%, -50%) scale(1.08); }
     }
 
-    /* Telas de línguas e final */
     .stage {
       position: fixed;
       inset: 0;
@@ -232,7 +222,10 @@
     <p>eu te amo, mas falar isso em só uma lingua é muito pouco.<br>você é o meu amor, e eu quero vc ao meu lado sempre ❤</p>
   </div>
 
-  <iframe id="musicPlayer" width="0" height="0" src="https://www.youtube.com/embed/J7j1WneusdY?autoplay=0&loop=1&playlist=J7j1WneusdY&mute=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+  <!-- Música sem ads: SoundCloud oficial (player limpo, autoplay após interação) -->
+  <iframe width="100%" height="0" scrolling="no" frameborder="no" allow="autoplay"
+    src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/872330833&color=%23ff5500&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false">
+  </iframe>
 
   <script>
     let wordElements = [];
@@ -275,7 +268,8 @@
         document.getElementById('main').classList.add('visible');
         document.getElementById('nextBtn').style.display = 'block';
         startWords();
-        document.getElementById('musicPlayer').src = document.getElementById('musicPlayer').src.replace('autoplay=0','autoplay=1');
+        // Tenta iniciar música do SoundCloud após interação (autoplay bloqueado sem isso)
+        document.querySelector('iframe[src*="soundcloud"]').src += '&auto_play=true';
       }, 1200);
     }
 
@@ -290,10 +284,10 @@
         const el = document.createElement('div');
         el.classList.add('word');
         el.innerText = text;
-        el.x = 8 + Math.random() * 84;    // posição inicial em %
+        el.x = 8 + Math.random() * 84;
         el.y = 12 + Math.random() * 68;
-        el.vx = (Math.random() - 0.5) * 0.6;
-        el.vy = (Math.random() - 0.5) * 0.6;
+        el.vx = (Math.random() - 0.5) * 1.4;  // velocidade inicial maior para movimento contínuo
+        el.vy = (Math.random() - 0.5) * 1.4;
         el.style.left = el.x + '%';
         el.style.top  = el.y + '%';
         container.appendChild(el);
@@ -309,41 +303,48 @@
     }
 
     function updateWords() {
-      const minDist = 18; // hitbox – ajuste aqui se quiser mais ou menos espaço (maior = mais afastados)
+      const minDist = 18; // hitbox para repulsão
 
       for (let i = 0; i < wordElements.length; i++) {
         const a = wordElements[i];
 
-        // movimento
         a.x += a.vx;
         a.y += a.vy;
 
-        // repulsão entre elogios
+        // Repulsão
         for (let j = i + 1; j < wordElements.length; j++) {
           const b = wordElements[j];
           const dx = a.x - b.x;
           const dy = a.y - b.y;
-          const dist = Math.sqrt(dx*dx + dy*dy);
+          const dist = Math.hypot(dx, dy);
 
           if (dist < minDist && dist > 0.5) {
-            const force = (minDist - dist) / minDist * 1.1;
-            a.vx += (dx / dist) * force;
-            a.vy += (dy / dist) * force;
-            b.vx -= (dx / dist) * force;
-            b.vy -= (dy / dist) * force;
+            const force = (minDist - dist) / minDist * 1.4;
+            const fx = (dx / dist) * force;
+            const fy = (dy / dist) * force;
+            a.vx += fx;
+            a.vy += fy;
+            b.vx -= fx;
+            b.vy -= fy;
           }
         }
 
-        // limites da área
-        if (a.x < 6 || a.x > 94) a.vx *= -0.85;
-        if (a.y < 10 || a.y > 85) a.vy *= -0.85;
+        // Limites
+        if (a.x < 6 || a.x > 94) a.vx *= -0.9;
+        if (a.y < 10 || a.y > 85) a.vy *= -0.9;
 
         a.x = Math.max(6, Math.min(94, a.x));
         a.y = Math.max(10, Math.min(85, a.y));
 
-        // atrito (para desacelerar devagar)
-        a.vx *= 0.965;
-        a.vy *= 0.965;
+        // Atrito reduzido (desacelera devagar)
+        a.vx *= 0.98;
+        a.vy *= 0.98;
+
+        // Empurrão aleatório sutil para movimento contínuo
+        if (Math.random() < 0.008) {  // chance baixa por frame
+          a.vx += (Math.random() - 0.5) * 0.5;
+          a.vy += (Math.random() - 0.5) * 0.5;
+        }
 
         a.style.left = a.x + '%';
         a.style.top  = a.y + '%';
@@ -351,6 +352,14 @@
 
       requestAnimationFrame(updateWords);
     }
+
+    const languages = [
+      "Português: Eu te amo","Inglês: I love you","Espanhol: Te amo","Francês: Je t'aime",
+      "Alemão: Ich liebe dich","Italiano: Ti amo","Japonês: Aishiteru","Coreano: Saranghae",
+      "Chinês: Wǒ ài nǐ","Russo: Ya tebya lyublyu","Árabe: Uhibbuk","Hindi: Main tumse pyar karta hoon",
+      "Polonês: Kocham cię","Turco: Seni seviyorum","Sueco: Jag älskar dig","Holandês: Ik hou van jou",
+      "Grego: S'agapo","Húngaro: Szeretlek","Finlandês: Minä rakastan sinua","Havaiano: Aloha wau iā ʻoe"
+    ];
 
     function goToLanguages() {
       document.getElementById('main').style.display = 'none';
@@ -380,10 +389,8 @@
     document.head.appendChild(styleSheet);
 
     document.addEventListener('click', () => {
-      const player = document.getElementById('musicPlayer');
-      if (player.src.includes('autoplay=0')) {
-        player.src = player.src.replace('autoplay=0','autoplay=1');
-      }
+      const player = document.querySelector('iframe[src*="soundcloud"]');
+      if (player) player.src = player.src.replace('auto_play=false', 'auto_play=true');
     }, { once: true });
   </script>
 </body>
