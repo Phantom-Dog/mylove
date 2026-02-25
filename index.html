@@ -22,7 +22,7 @@
       touch-action: manipulation;
     }
 
-    /* Corações caindo – menos densos em mobile */
+    /* Corações caindo */
     .heart {
       position: absolute;
       top: -10vh;
@@ -34,6 +34,20 @@
     @keyframes fall {
       0%   { transform: translateY(0) translateX(0) rotate(0deg); }
       100% { transform: translateY(120vh) translateX(60vw) rotate(720deg); }
+    }
+
+    /* Explosão */
+    .explosion-heart {
+      position: absolute;
+      font-size: 2.5rem;
+      pointer-events: none;
+      animation: explode 1.2s forwards;
+      z-index: 20;
+    }
+    @keyframes explode {
+      0% { transform: scale(0.5) translate(0,0); opacity: 1; }
+      50% { transform: scale(1.8) translate(var(--dx), var(--dy)); opacity: 1; }
+      100% { transform: scale(0) translate(var(--dx), var(--dy)); opacity: 0; }
     }
 
     /* Tela inicial */
@@ -71,7 +85,6 @@
       border-left: 50% solid transparent;
       border-right: 50% solid transparent;
       border-bottom: 70% solid #e74c3c;
-      z-index: -1;
     }
     .envelope::after {
       content: "Para minha Princesinha 💌";
@@ -92,7 +105,7 @@
       flex-direction: column;
       align-items: center;
       padding: 2vh 4vw;
-      overflow-y: auto;
+      overflow: hidden;
     }
     .main.visible { display: flex; }
 
@@ -139,6 +152,7 @@
       pointer-events: none;
       user-select: none;
       white-space: nowrap;
+      transition: transform 0.08s linear;
     }
 
     .word.central {
@@ -218,22 +232,10 @@
     <p>eu te amo, mas falar isso em só uma lingua é muito pouco.<br>você é o meu amor, e eu quero vc ao meu lado sempre ❤</p>
   </div>
 
-  <!-- Música -->
   <iframe id="musicPlayer" width="0" height="0" src="https://www.youtube.com/embed/J7j1WneusdY?autoplay=0&loop=1&playlist=J7j1WneusdY&mute=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
   <script>
-    const languages = [
-      "Português: Eu te amo", "Inglês: I love you",
-      "Espanhol: Te amo", "Francês: Je t'aime",
-      "Alemão: Ich liebe dich", "Italiano: Ti amo",
-      "Japonês: Aishiteru", "Coreano: Saranghae",
-      "Chinês: Wǒ ài nǐ", "Russo: Ya tebya lyublyu",
-      "Árabe: Uhibbuk", "Hindi: Main tumse pyar karta hoon",
-      "Polonês: Kocham cię", "Turco: Seni seviyorum",
-      "Sueco: Jag älskar dig", "Holandês: Ik hou van jou",
-      "Grego: S'agapo", "Húngaro: Szeretlek",
-      "Finlandês: Minä rakastan sinua", "Havaiano: Aloha wau iā ʻoe"
-    ];
+    let wordElements = [];
 
     function createHeart() {
       for (let i = 0; i < 3; i++) {
@@ -280,30 +282,74 @@
     function startWords() {
       const container = document.getElementById('words');
       container.innerHTML = '';
+      wordElements = [];
+
       const words = ["linda","amorosa","fofa","carinhosa","meiga","companheira","atraente","graciosa","elegante","estilosa","perfeitinha","beldade","incrível"];
 
       words.forEach(text => {
         const el = document.createElement('div');
         el.classList.add('word');
         el.innerText = text;
-        let top = 15 + Math.random() * 70;
-        let left = 5 + Math.random() * 90;
-        if (Math.abs(left - 50) < 30 && Math.abs(top - 50) < 20) {
-          left += left > 50 ? 35 : -35;
-          top += top > 50 ? 25 : -25;
-        }
-        left = Math.max(5, Math.min(95, left));
-        top = Math.max(10, Math.min(90, top));
-        el.style.top = top + '%';
-        el.style.left = left + '%';
-        el.style.animationDelay = Math.random() * 3 + 's';
+        el.x = 8 + Math.random() * 84;    // posição inicial em %
+        el.y = 12 + Math.random() * 68;
+        el.vx = (Math.random() - 0.5) * 0.6;
+        el.vy = (Math.random() - 0.5) * 0.6;
+        el.style.left = el.x + '%';
+        el.style.top  = el.y + '%';
         container.appendChild(el);
+        wordElements.push(el);
       });
 
       const central = document.createElement('div');
       central.classList.add('word', 'central');
       central.innerText = "amor da minha vida";
       container.appendChild(central);
+
+      requestAnimationFrame(updateWords);
+    }
+
+    function updateWords() {
+      const minDist = 18; // hitbox – ajuste aqui se quiser mais ou menos espaço (maior = mais afastados)
+
+      for (let i = 0; i < wordElements.length; i++) {
+        const a = wordElements[i];
+
+        // movimento
+        a.x += a.vx;
+        a.y += a.vy;
+
+        // repulsão entre elogios
+        for (let j = i + 1; j < wordElements.length; j++) {
+          const b = wordElements[j];
+          const dx = a.x - b.x;
+          const dy = a.y - b.y;
+          const dist = Math.sqrt(dx*dx + dy*dy);
+
+          if (dist < minDist && dist > 0.5) {
+            const force = (minDist - dist) / minDist * 1.1;
+            a.vx += (dx / dist) * force;
+            a.vy += (dy / dist) * force;
+            b.vx -= (dx / dist) * force;
+            b.vy -= (dy / dist) * force;
+          }
+        }
+
+        // limites da área
+        if (a.x < 6 || a.x > 94) a.vx *= -0.85;
+        if (a.y < 10 || a.y > 85) a.vy *= -0.85;
+
+        a.x = Math.max(6, Math.min(94, a.x));
+        a.y = Math.max(10, Math.min(85, a.y));
+
+        // atrito (para desacelerar devagar)
+        a.vx *= 0.965;
+        a.vy *= 0.965;
+
+        a.style.left = a.x + '%';
+        a.style.top  = a.y + '%';
+      }
+
+      requestAnimationFrame(updateWords);
     }
 
     function goToLanguages() {
