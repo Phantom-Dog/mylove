@@ -270,6 +270,10 @@
     <p style="margin-top: 4vh; font-size: clamp(1.2rem, 4.5vw, 1.8rem);">Ass: Daniel</p>
   </div>
 
+  <div class="stage thankYou" id="timeSinceStage">
+    <p id="timeCounter" style="margin-top: 4vh; font-size: clamp(1.2rem, 4.5vw, 1.8rem);"></p>
+  </div>
+
   <!-- ÁUDIO NATIVO - usando seu arquivo poesia-pra-ela.mp3 -->
   <audio id="bgMusic" loop preload="auto">
     <source src="poesia-pra-ela.mp3" type="audio/mpeg">
@@ -440,8 +444,30 @@
 
           clearInterval(window.heartInterval);
           window.heartInterval = setInterval(() => createHeart(1, 0.4, 15), 800);
+
+          setTimeout(() => {
+            document.getElementById('thankYouStage').classList.remove('visible');
+            document.getElementById('timeSinceStage').classList.add('visible');
+            updateTimeCounter();
+            setInterval(updateTimeCounter, 60000); // Atualiza a cada minuto
+          }, 15000);
         }, 10000);
       }, 10000);
+    }
+
+    function updateTimeCounter() {
+      const startDate = new Date(2025, 7, 20); // 20 de agosto de 2025 (mês 7 é agosto, 0-indexado)
+      const now = new Date();
+      const diffMs = now - startDate;
+
+      const months = Math.floor(diffMs / (1000 * 60 * 60 * 24 * 30.4375)); // Aproximado, mês médio
+      const days = Math.floor((diffMs % (1000 * 60 * 60 * 24 * 30.4375)) / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+
+      const counterText = `O primeiro 'te amo' foi há ${months} meses, ${days} dias, ${hours} horas e ${minutes} minutos ❤️`;
+
+      document.getElementById('timeCounter').textContent = counterText;
     }
 
     function playMusic() {
