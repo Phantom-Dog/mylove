@@ -8,488 +8,82 @@
     * { margin:0; padding:0; box-sizing:border-box; }
     body {
       height: 100dvh;
-      min-height: -webkit-fill-available;
       background: linear-gradient(135deg, #ffe4e1, #ffc1cc, #ff9aa2, #ff758c);
       font-family: 'Georgia', serif;
       color: white;
       overflow: hidden;
       position: relative;
-      touch-action: manipulation;
     }
 
     audio { display: none; }
 
-    .heart {
-      position: absolute;
-      top: -10vh;
-      font-size: clamp(1rem, 4vw, 1.8rem);
-      pointer-events: none;
-      animation: fall linear infinite;
-      opacity: 0.8;
-    }
-    @keyframes fall {
-      0%   { transform: translateY(0) translateX(0) rotate(0deg); }
-      100% { transform: translateY(120vh) translateX(60vw) rotate(720deg); }
-    }
-
-    .explosion-heart {
-      position: absolute;
-      font-size: 2.5rem;
-      pointer-events: none;
-      animation: explode 1.2s forwards;
-      z-index: 20;
-    }
-    @keyframes explode {
-      0% { transform: scale(0.5) translate(0,0); opacity: 1; }
-      50% { transform: scale(1.8) translate(var(--dx), var(--dy)); opacity: 1; }
-      100% { transform: scale(0) translate(var(--dx), var(--dy)); opacity: 0; }
-    }
-
-    .intro {
-      position: fixed;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 10;
-      transition: opacity 1.2s ease;
-    }
-    .intro.hidden { opacity: 0; pointer-events: none; }
-
-    .envelope {
-      width: clamp(200px, 50vw, 260px);
-      height: clamp(140px, 35vw, 180px);
-      background: linear-gradient(to bottom, #e74c3c, #c0392b);
-      border-radius: 12px 12px 6px 6px;
-      position: relative;
-      cursor: pointer;
-      box-shadow: 0 12px 35px rgba(0,0,0,0.4);
-      transition: transform 0.4s ease;
-      overflow: hidden;
-    }
-    .envelope:active { transform: scale(1.08) rotate(2deg); }
-
-    .envelope::before {
-      content: "";
-      position: absolute;
-      top: -40%;
-      left: 0;
-      width: 100%;
-      height: 80%;
-      background: linear-gradient(to bottom, #ff6b6b, #e74c3c);
-      clip-path: polygon(0 0, 100% 0, 50% 100%);
-      z-index: 1;
-      box-shadow: inset 0 -10px 20px rgba(0,0,0,0.3);
-    }
-
-    .envelope::after {
-      content: "❤️";
-      position: absolute;
-      top: -20%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: clamp(1.8rem, 6vw, 2.8rem);
-      color: #fff;
-      text-shadow: 0 0 15px rgba(255,255,255,0.8);
-      z-index: 2;
-      background: radial-gradient(circle, #ff3366 30%, transparent 70%);
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-    }
-
-    .envelope-text {
-      margin-top: 20px;
-      font-size: clamp(1.4rem, 5vw, 2.2rem);
-      text-shadow: 0 2px 10px rgba(0,0,0,0.7);
-      text-align: center;
-      white-space: nowrap;
-    }
-
-    .main {
-      position: fixed;
-      inset: 0;
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      padding: 2vh 4vw;
-      overflow: hidden;
-    }
-    .main.visible { display: flex; }
-
-    #nextBtn {
-      display: none;
-      margin: 6vh auto 5vh;
-      padding: 1.2rem 3.5rem;
-      font-size: clamp(1.3rem, 5vw, 1.7rem);
-      font-weight: bold;
-      color: white;
-      background: #7d3cff;
-      border: none;
-      border-radius: 3rem;
-      cursor: pointer;
-      box-shadow: 0 6px 20px rgba(125,60,255,0.5);
-      transition: all 0.25s;
-    }
-    #nextBtn:active {
-      transform: scale(0.96);
-      box-shadow: 0 4px 12px rgba(125,60,255,0.4);
-    }
-
-    .words-container {
-      position: relative;
-      width: 100%;
-      height: 70vh;
-      max-height: 600px;
-    }
-
-    .word {
-      position: absolute;
-      font-size: clamp(1.3rem, 4.5vw, 2.2rem);
-      font-weight: bold;
-      color: white;
-      text-shadow: 0 0 12px rgba(0,0,0,0.6), 0 0 25px #ff3366;
-      pointer-events: none;
-      user-select: none;
-      white-space: nowrap;
-      transition: transform 0.1s linear;
-    }
-
-    .word.central {
-      font-size: clamp(2.2rem, 7vw, 4rem);
-      text-shadow: 0 0 25px white, 0 0 50px #ff69b4;
-      animation: pulse 2.8s infinite;
-      pointer-events: auto;
-      cursor: pointer;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 10;
-    }
-    @keyframes pulse {
-      0%, 100% { transform: translate(-50%, -50%) scale(1); }
-      50%      { transform: translate(-50%, -50%) scale(1.08); }
-    }
-
-    .stage {
-      position: fixed;
-      inset: 0;
-      display: none;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 4vh 6vw;
-      text-align: center;
-      font-size: clamp(1.6rem, 5vw, 2.1rem);
-      opacity: 0;
-      transition: opacity 1.2s;
-    }
-    .stage.visible { display: flex; opacity: 1; }
-
-    #languagesList {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.2rem 2rem;
-      width: 100%;
-      max-width: 800px;
-      text-align: left;
-    }
-    #languagesList p {
-      margin: 0;
-      font-size: clamp(1.3rem, 4vw, 1.8rem);
-    }
-
-    .stage.final, .stage.thankYou {
-      font-size: clamp(1.8rem, 5.5vw, 2.6rem);
-      background: linear-gradient(135deg, #ff758c, #ff3366, #c0392b);
-      line-height: 1.6;
-    }
-    .stage.thankYou {
-      font-size: clamp(1.1rem, 4.2vw, 1.5rem);
-      line-height: 1.45;
-      padding: 4vh 8vw 10vh;
-      overflow-y: auto;
-    }
-    .stage.thankYou p {
-      max-width: 90%;
-      margin: 2vh 0;
-      text-align: center;
-    }
-    .heart-final {
-      font-size: clamp(3rem, 12vw, 5rem);
-      animation: pulse 2s infinite;
-      margin: 3vh 0;
-    }
-
-    /* Botão discreto de fallback para música (só aparece se não tocar) */
-    #musicFallback {
+    #musicBtn {
       position: fixed;
       bottom: 20px;
       right: 20px;
-      background: rgba(255,255,255,0.2);
+      background: #7d3cff;
       color: white;
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-size: 0.9rem;
-      cursor: pointer;
+      padding: 12px 20px;
+      border-radius: 30px;
+      font-size: 1rem;
+      font-weight: bold;
+      border: none;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
       z-index: 999;
-      display: none;
+      cursor: pointer;
     }
+
+    /* resto do seu CSS anterior (envelope, palavras, etc.) */
+    .heart { position: absolute; top: -10vh; font-size: clamp(1rem, 4vw, 1.8rem); pointer-events: none; animation: fall linear infinite; opacity: 0.8; }
+    @keyframes fall { 0% { transform: translateY(0) translateX(0) rotate(0deg); } 100% { transform: translateY(120vh) translateX(60vw) rotate(720deg); } }
+
+    .intro, .main, .stage { /* seu CSS anterior */ }
+    /* ... (mantenha o resto do CSS que você já tinha) ... */
   </style>
 </head>
 <body>
+
+  <!-- seu HTML anterior (envelope, páginas, etc.) -->
 
   <div class="intro" id="intro">
     <div class="envelope" onclick="openLetter()"></div>
     <div class="envelope-text">Para minha Princesinha 💌</div>
   </div>
 
-  <div class="main" id="main">
-    <button id="nextBtn" onclick="goToLanguages()">CLIQUE AQUI</button>
-    <div class="words-container" id="words"></div>
-  </div>
+  <!-- ... resto do seu HTML (main, stages, etc.) ... -->
 
-  <div class="stage" id="languagesStage">
-    <div id="languagesList"></div>
-  </div>
-
-  <div class="stage final" id="finalStage">
-    <div class="heart-final">❤</div>
-    <p>eu te amo, mas falar isso em só uma lingua é muito pouco.<br>você é o meu amor, e eu quero vc ao meu lado sempre ❤</p>
-  </div>
-
-  <div class="stage thankYou" id="thankYouStage">
-    <p>A gente se conheceu há vários meses, e eu não fazia ideia naquela época de quão importante vc viria a ser na minha vida, o quão especial vc se tornaria, por ser essa pessoa incrível que me conquista todo dia. Eu amo seu sorriso, sua voz, seu cabelo, sua risada, sua companhia, sua alegria...<br>Eu amo você todinha meu amor ❤️</p>
-    <p style="margin-top: 4vh; font-size: clamp(1.2rem, 4.5vw, 1.8rem);">Ass: Daniel</p>
-  </div>
-
-  <!-- Áudio nativo - refatorado do zero -->
+  <!-- Áudio nativo -->
   <audio id="bgMusic" loop preload="auto">
     <source src="poesia-pra-ela.mp3" type="audio/mpeg">
-    Seu navegador não suporta áudio.
   </audio>
 
-  <!-- Botão de fallback (aparece só se não tocar) -->
-  <div id="musicFallback" onclick="document.getElementById('bgMusic').play()">Tocar música</div>
+  <!-- Botão de emergência -->
+  <button id="musicBtn" onclick="document.getElementById('bgMusic').play()">🎵 Tocar Música</button>
 
   <script>
-    let wordElements = [];
-    let animationFrameId = null;
     const music = document.getElementById('bgMusic');
-    const fallbackBtn = document.getElementById('musicFallback');
 
-    const languages = [
-      "Português: Eu te amo","Inglês: I love you","Espanhol: Te amo","Francês: Je t'aime",
-      "Alemão: Ich liebe dich","Italiano: Ti amo","Japonês: Aishiteru","Coreano: Saranghae",
-      "Chinês: Wǒ ài nǐ","Russo: Ya tebya lyublyu","Árabe: Uhibbuk","Hindi: Main tumse pyar karta hoon",
-      "Polonês: Kocham cię","Turco: Seni seviyorum","Sueco: Jag älskar dig","Holandês: Ik hou van jou",
-      "Grego: S'agapo","Húngaro: Szeretlek","Finlandês: Minä rakastan sinua","Havaiano: Aloha wau iā ʻoe"
-    ];
-
-    function createHeart(count = 3, opacity = 0.8, durationMin = 8) {
-      for (let i = 0; i < count; i++) {
-        const heart = document.createElement('div');
-        heart.classList.add('heart');
-        heart.innerHTML = Math.random() > 0.5 ? '❤️' : '💕';
-        heart.style.left = Math.random() * 100 + 'vw';
-        heart.style.animationDuration = (durationMin + Math.random() * 11) + 's';
-        heart.style.animationDelay = Math.random() * 2 + 's';
-        heart.style.opacity = opacity;
-        document.body.appendChild(heart);
-        setTimeout(() => heart.remove(), 25000);
-      }
-    }
-    window.heartInterval = setInterval(() => createHeart(3, 0.8, 8), 170);
-
-    function explodeHearts(x, y) {
-      const colors = ['❤️','💖','💗','💓','💞'];
-      for (let i = 0; i < 20; i++) {
-        const h = document.createElement('div');
-        h.classList.add('explosion-heart');
-        h.innerHTML = colors[Math.floor(Math.random()*5)];
-        h.style.left = x + 'px';
-        h.style.top = y + 'px';
-        h.style.setProperty('--dx', (Math.random()-0.5)*300 + 'px');
-        h.style.setProperty('--dy', (Math.random()-0.5)*300 + 'px');
-        h.style.animationDelay = Math.random()*0.3 + 's';
-        document.body.appendChild(h);
-        setTimeout(() => h.remove(), 1500);
-      }
-    }
-
-    function openLetter() {
-      const rect = document.querySelector('.envelope').getBoundingClientRect();
-      explodeHearts(rect.left + rect.width/2, rect.top + rect.height/2);
-      document.getElementById('intro').classList.add('hidden');
-      setTimeout(() => {
-        document.getElementById('main').classList.add('visible');
-        document.getElementById('nextBtn').style.display = 'block';
-        startWords();
-        playMusic(); // tenta tocar ao abrir carta
-      }, 1200);
-    }
-
-    function startWords() {
-      const container = document.getElementById('words');
-      container.innerHTML = '';
-      wordElements = [];
-
-      const words = ["linda","amorosa","fofa","carinhosa","meiga","companheira","atraente","graciosa","elegante","estilosa","perfeitinha","beldade","incrível"];
-
-      words.forEach(text => {
-        const el = document.createElement('div');
-        el.classList.add('word');
-        el.innerText = text;
-        el.x = 8 + Math.random() * 84;
-        el.y = 12 + Math.random() * 68;
-        el.vx = (Math.random() - 0.5) * 1.4;
-        el.vy = (Math.random() - 0.5) * 1.4;
-        el.style.left = el.x + '%';
-        el.style.top  = el.y + '%';
-        container.appendChild(el);
-        wordElements.push(el);
-      });
-
-      const central = document.createElement('div');
-      central.classList.add('word', 'central');
-      central.innerText = "amor da minha vida";
-      container.appendChild(central);
-
-      if (animationFrameId) cancelAnimationFrame(animationFrameId);
-      animationFrameId = requestAnimationFrame(updateWords);
-    }
-
-    function updateWords() {
-      const minDist = 18;
-
-      for (let i = 0; i < wordElements.length; i++) {
-        const a = wordElements[i];
-
-        a.x += a.vx;
-        a.y += a.vy;
-
-        for (let j = i + 1; j < wordElements.length; j++) {
-          const b = wordElements[j];
-          const dx = a.x - b.x;
-          const dy = a.y - b.y;
-          const dist = Math.hypot(dx, dy);
-
-          if (dist < minDist && dist > 0.5) {
-            const force = (minDist - dist) / minDist * 1.4;
-            const fx = (dx / dist) * force;
-            const fy = (dy / dist) * force;
-            a.vx += fx;
-            a.vy += fy;
-            b.vx -= fx;
-            b.vy -= fy;
-          }
-        }
-
-        if (a.x < 6 || a.x > 94) a.vx *= -0.9;
-        if (a.y < 10 || a.y > 85) a.vy *= -0.9;
-
-        a.x = Math.max(6, Math.min(94, a.x));
-        a.y = Math.max(10, Math.min(85, a.y));
-
-        a.vx *= 0.98;
-        a.vy *= 0.98;
-
-        if (Math.random() < 0.008) {
-          a.vx += (Math.random() - 0.5) * 0.5;
-          a.vy += (Math.random() - 0.5) * 0.5;
-        }
-
-        a.style.left = a.x + '%';
-        a.style.top  = a.y + '%';
-      }
-
-      animationFrameId = requestAnimationFrame(updateWords);
-    }
-
-    function goToLanguages() {
-      try {
-        if (animationFrameId) {
-          cancelAnimationFrame(animationFrameId);
-          animationFrameId = null;
-        }
-        document.querySelectorAll('.heart').forEach(h => h.remove());
-
-        document.getElementById('main').style.display = 'none';
-        const stage = document.getElementById('languagesStage');
-        stage.classList.add('visible');
-
-        const list = document.getElementById('languagesList');
-        list.innerHTML = '';
-        languages.forEach((lang, i) => {
-          const p = document.createElement('p');
-          p.textContent = lang;
-          p.style.opacity = 0;
-          p.style.animation = `fadeIn 1s forwards ${i * 0.12}s`;
-          list.appendChild(p);
-        });
-
-        setTimeout(() => {
-          stage.classList.remove('visible');
-          document.getElementById('finalStage').classList.add('visible');
-
-          setTimeout(() => {
-            document.getElementById('finalStage').classList.remove('visible');
-            document.getElementById('thankYouStage').classList.add('visible');
-
-            clearInterval(window.heartInterval);
-            window.heartInterval = setInterval(() => createHeart(1, 0.4, 15), 800);
-          }, 10000);
-        }, 10000);
-      } catch (error) {
-        console.error('Erro na transição:', error);
-        document.getElementById('main').style.display = 'none';
-        document.getElementById('thankYouStage').classList.add('visible');
-      }
-    }
-
-    const styleSheet = document.createElement('style');
-    styleSheet.textContent = `
-      @keyframes fadeIn { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
-    `;
-    document.head.appendChild(styleSheet);
-
-    // Áudio nativo - refatorado do zero
     function playMusic() {
-      if (music.paused) {
-        music.play().then(() => {
-          console.log('Música tocando!');
-          fallbackBtn.style.display = 'none'; // esconde botão se tocar
-        }).catch(err => {
-          console.log('Erro ao tocar:', err);
-          fallbackBtn.style.display = 'block'; // mostra botão de fallback
-        });
-      }
+      music.play().then(() => {
+        console.log("✅ Música tocando!");
+        document.getElementById('musicBtn').style.display = 'none';
+      }).catch(e => {
+        console.log("❌ Erro ao tocar:", e);
+        document.getElementById('musicBtn').style.display = 'block';
+      });
     }
 
-    // Listener em vários eventos para mobile
-    ['click', 'touchstart', 'touchend'].forEach(evt => {
-      document.addEventListener(evt, playMusic, { passive: true });
-    });
+    // Tenta tocar em qualquer toque/clique
+    document.addEventListener('click', playMusic, { passive: true });
+    document.addEventListener('touchstart', playMusic, { passive: true });
 
-    // Tenta tocar ao abrir carta ou botão
+    // Tenta novamente a cada 3 segundos até tocar
+    setInterval(() => {
+      if (music.paused) playMusic();
+    }, 3000);
+
+    // Tenta tocar quando abrir o envelope
     document.querySelector('.envelope').addEventListener('click', playMusic);
-    document.getElementById('nextBtn').addEventListener('click', playMusic);
-
-    // Tenta a cada 4 segundos até tocar (fallback)
-    const musicRetry = setInterval(() => {
-      playMusic();
-      if (!music.paused) clearInterval(musicRetry);
-    }, 4000);
-
-    // Se falhar por muito tempo, mostra botão de fallback
-    setTimeout(() => {
-      if (music.paused) fallbackBtn.style.display = 'block';
-    }, 8000);
   </script>
 </body>
 </html>
