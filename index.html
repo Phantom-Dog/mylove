@@ -268,6 +268,7 @@
   <div class="stage thankYou" id="thankYouStage">
     <p>A gente se conheceu há vários meses, e eu não fazia ideia naquela época de quão importante vc viria a ser na minha vida, o quão especial vc se tornaria, por ser essa pessoa incrível que me conquista todo dia. Eu amo seu sorriso, sua voz, seu cabelo, sua risada, sua companhia, sua alegria...<br>Eu amo você todinha meu amor ❤️</p>
     <p style="margin-top: 4vh; font-size: clamp(1.2rem, 4.5vw, 1.8rem);">Ass: Daniel</p>
+    <p id="countdown" style="margin-top: 4vh; font-size: clamp(1.2rem, 4.5vw, 1.8rem);">Próxima surpresa em: 15 segundos</p>
   </div>
 
   <div class="stage thankYou" id="timeSinceStage">
@@ -445,12 +446,19 @@
           clearInterval(window.heartInterval);
           window.heartInterval = setInterval(() => createHeart(1, 0.4, 15), 800);
 
-          setTimeout(() => {
-            document.getElementById('thankYouStage').classList.remove('visible');
-            document.getElementById('timeSinceStage').classList.add('visible');
-            updateTimeCounter();
-            setInterval(updateTimeCounter, 60000); // Atualiza a cada minuto
-          }, 15000);
+          let countdown = 15;
+          const countdownElem = document.getElementById('countdown');
+          const countdownInterval = setInterval(() => {
+            countdown--;
+            countdownElem.textContent = `Próxima surpresa em: ${countdown} segundos`;
+            if (countdown <= 0) {
+              clearInterval(countdownInterval);
+              document.getElementById('thankYouStage').classList.remove('visible');
+              document.getElementById('timeSinceStage').classList.add('visible');
+              updateTimeCounter();
+              setInterval(updateTimeCounter, 60000);
+            }
+          }, 1000);
         }, 10000);
       }, 10000);
     }
@@ -465,7 +473,7 @@
       const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
 
-      const counterText = `O primeiro 'te amo' foi há ${months} meses, ${days} dias, ${hours} horas e ${minutes} minutos ❤️`;
+      const counterText = `O primeiro "Te amo" foi há ${months} meses, ${days} dias, ${hours} horas e ${minutes} minutos ❤️`;
 
       document.getElementById('timeCounter').textContent = counterText;
     }
