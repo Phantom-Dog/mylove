@@ -122,7 +122,7 @@
 
     #nextBtn {
       display: none;
-      margin: 6vh auto 5vh; /* Aumentei margem de cima para centralizar melhor sem título */
+      margin: 6vh auto 5vh;
       padding: 1.2rem 3.5rem;
       font-size: clamp(1.3rem, 5vw, 1.7rem);
       font-weight: bold;
@@ -142,7 +142,7 @@
     .words-container {
       position: relative;
       width: 100%;
-      height: 70vh; /* Aumentei altura para ocupar melhor o espaço sem título */
+      height: 70vh;
       max-height: 600px;
     }
 
@@ -233,7 +233,6 @@
   </div>
 
   <div class="main" id="main">
-    <!-- Sem título aqui mais -->
     <button id="nextBtn" onclick="goToLanguages()">CLIQUE AQUI</button>
     <div class="words-container" id="words"></div>
   </div>
@@ -252,7 +251,7 @@
     <p style="margin-top: 4vh; font-size: clamp(1.2rem, 4.5vw, 1.8rem);">Ass: Daniel</p>
   </div>
 
-  <!-- Música SoundCloud -->
+  <!-- Música: Poesia Pra Ela - João Napoli (SoundCloud oficial) -->
   <iframe id="soundcloudPlayer" width="100%" height="0" scrolling="no" frameborder="no" allow="autoplay"
     src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/872330833&color=%23ff5500&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false">
   </iframe>
@@ -435,12 +434,25 @@
     `;
     document.head.appendChild(styleSheet);
 
-    document.addEventListener('click', () => {
+    // Listener robusto para iniciar música do SoundCloud
+    function tryPlayMusic() {
       const player = document.getElementById('soundcloudPlayer');
-      if (player && player.src.includes('auto_play=false')) {
-        player.src = player.src.replace('auto_play=false', 'auto_play=true');
+      if (player) {
+        let src = player.src;
+        if (src.includes('auto_play=false')) {
+          src = src.replace('auto_play=false', 'auto_play=true');
+          player.src = src;
+          console.log('Tentando iniciar música...');
+        }
       }
-    }, { once: true });
+    }
+
+    // Tenta iniciar em qualquer clique/tap na página
+    document.addEventListener('click', tryPlayMusic, { once: false });
+    document.addEventListener('touchstart', tryPlayMusic, { once: false, passive: true });
+
+    // Tenta novamente após 2s (fallback para alguns navegadores mobile)
+    setTimeout(tryPlayMusic, 2000);
   </script>
 </body>
 </html>
