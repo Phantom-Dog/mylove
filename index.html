@@ -17,7 +17,7 @@
       touch-action: manipulation;
     }
 
-    /* Corações caindo */
+    /* Corações caindo (controlados por JS para reduzir na última tela) */
     .heart {
       position: absolute;
       top: -10vh;
@@ -191,9 +191,14 @@
       font-size: clamp(1.3rem, 4vw, 1.8rem);
     }
 
-    .stage.final {
+    .stage.final, .stage.thankYou {
       font-size: clamp(1.8rem, 5.5vw, 2.6rem);
       background: linear-gradient(135deg, #ff758c, #ff3366, #c0392b);
+      line-height: 1.6;
+    }
+    .stage.thankYou p {
+      max-width: 90%;
+      margin: 2vh 0;
     }
     .heart-final {
       font-size: clamp(3rem, 12vw, 5rem);
@@ -223,6 +228,12 @@
     <p>eu te amo, mas falar isso em só uma lingua é muito pouco.<br>você é o meu amor, e eu quero vc ao meu lado sempre ❤</p>
   </div>
 
+  <!-- Nova página final (aparece após 10s da anterior) -->
+  <div class="stage thankYou" id="thankYouStage">
+    <p>A gente se conheceu há vários meses, e eu não fazia ideia naquela época de quão importante vc viria a ser na minha vida, o quão especial vc se tornaria, por ser essa pessoa incrível que me conquista todo dia. Eu amo seu sorriso, sua voz, seu cabelo, sua risada, sua companhia, sua alegria...<br>Eu amo você todinha meu amor ❤️</p>
+    <p style="margin-top: 4vh; font-size: clamp(1.4rem, 5vw, 2rem);">Ass: Daniel</p>
+  </div>
+
   <!-- Música SoundCloud (sem ads visíveis) -->
   <iframe id="soundcloudPlayer" width="100%" height="0" scrolling="no" frameborder="no" allow="autoplay"
     src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/872330833&color=%23ff5500&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false">
@@ -230,21 +241,30 @@
 
   <script>
     let wordElements = [];
-    let animationFrameId = null; // para parar o loop quando sair da tela
+    let animationFrameId = null;
 
-    function createHeart() {
-      for (let i = 0; i < 3; i++) {
+    const languages = [
+      "Português: Eu te amo","Inglês: I love you","Espanhol: Te amo","Francês: Je t'aime",
+      "Alemão: Ich liebe dich","Italiano: Ti amo","Japonês: Aishiteru","Coreano: Saranghae",
+      "Chinês: Wǒ ài nǐ","Russo: Ya tebya lyublyu","Árabe: Uhibbuk","Hindi: Main tumse pyar karta hoon",
+      "Polonês: Kocham cię","Turco: Seni seviyorum","Sueco: Jag älskar dig","Holandês: Ik hou van jou",
+      "Grego: S'agapo","Húngaro: Szeretlek","Finlandês: Minä rakastan sinua","Havaiano: Aloha wau iā ʻoe"
+    ];
+
+    function createHeart(count = 3, opacity = 0.8, durationMin = 8) {
+      for (let i = 0; i < count; i++) {
         const heart = document.createElement('div');
         heart.classList.add('heart');
         heart.innerHTML = Math.random() > 0.5 ? '❤️' : '💕';
         heart.style.left = Math.random() * 100 + 'vw';
-        heart.style.animationDuration = (8 + Math.random() * 11) + 's';
+        heart.style.animationDuration = (durationMin + Math.random() * 11) + 's';
         heart.style.animationDelay = Math.random() * 2 + 's';
+        heart.style.opacity = opacity;
         document.body.appendChild(heart);
         setTimeout(() => heart.remove(), 25000);
       }
     }
-    setInterval(createHeart, 170);
+    setInterval(() => createHeart(3, 0.8, 8), 170); // normal
 
     function explodeHearts(x, y) {
       const colors = ['❤️','💖','💗','💓','💞'];
@@ -352,13 +372,10 @@
 
     function goToLanguages() {
       try {
-        // Para o loop de animação das palavras
         if (animationFrameId) {
           cancelAnimationFrame(animationFrameId);
           animationFrameId = null;
         }
-
-        // Remove todos os corações caindo (para limpar a tela)
         document.querySelectorAll('.heart').forEach(h => h.remove());
 
         document.getElementById('main').style.display = 'none';
@@ -378,22 +395,26 @@
         setTimeout(() => {
           stage.classList.remove('visible');
           document.getElementById('finalStage').classList.add('visible');
+
+          // Após +10s da tela "uma língua é pouco", vai pra página final
+          setTimeout(() => {
+            document.getElementById('finalStage').classList.remove('visible');
+            document.getElementById('thankYouStage').classList.add('visible');
+
+            // Reduz corações em 70% na última página
+            clearInterval(window.heartInterval);
+            window.heartInterval = setInterval(() => createHeart(1, 0.5, 12), 600); // 1 coração a cada 600ms, opacidade baixa, duração maior
+          }, 10000);
         }, 10000);
       } catch (error) {
         console.error('Erro na transição:', error);
-        // Se der erro, força mostrar a tela final como fallback
         document.getElementById('main').style.display = 'none';
-        document.getElementById('finalStage').classList.add('visible');
+        document.getElementById('thankYouStage').classList.add('visible');
       }
     }
 
-    const languages = [
-      "Português: Eu te amo","Inglês: I love you","Espanhol: Te amo","Francês: Je t'aime",
-      "Alemão: Ich liebe dich","Italiano: Ti amo","Japonês: Aishiteru","Coreano: Saranghae",
-      "Chinês: Wǒ ài nǐ","Russo: Ya tebya lyublyu","Árabe: Uhibbuk","Hindi: Main tumse pyar karta hoon",
-      "Polonês: Kocham cię","Turco: Seni seviyorum","Sueco: Jag älskar dig","Holandês: Ik hou van jou",
-      "Grego: S'agapo","Húngaro: Szeretlek","Finlandês: Minä rakastan sinua","Havaiano: Aloha wau iā ʻoe"
-    ];
+    // Inicia intervalo normal de corações
+    window.heartInterval = setInterval(() => createHeart(3, 0.8, 8), 170);
 
     const styleSheet = document.createElement('style');
     styleSheet.textContent = `
