@@ -17,7 +17,6 @@
       touch-action: manipulation;
     }
 
-    /* Corações caindo (controlados por JS para reduzir na última tela) */
     .heart {
       position: absolute;
       top: -10vh;
@@ -196,9 +195,16 @@
       background: linear-gradient(135deg, #ff758c, #ff3366, #c0392b);
       line-height: 1.6;
     }
+    .stage.thankYou {
+      font-size: clamp(1.1rem, 4.2vw, 1.5rem); /* fonte menor para caber no celular */
+      line-height: 1.45; /* espaçamento entre linhas mais apertado */
+      padding: 4vh 8vw 10vh;
+      overflow-y: auto;
+    }
     .stage.thankYou p {
       max-width: 90%;
       margin: 2vh 0;
+      text-align: center;
     }
     .heart-final {
       font-size: clamp(3rem, 12vw, 5rem);
@@ -228,13 +234,12 @@
     <p>eu te amo, mas falar isso em só uma lingua é muito pouco.<br>você é o meu amor, e eu quero vc ao meu lado sempre ❤</p>
   </div>
 
-  <!-- Nova página final (aparece após 10s da anterior) -->
   <div class="stage thankYou" id="thankYouStage">
     <p>A gente se conheceu há vários meses, e eu não fazia ideia naquela época de quão importante vc viria a ser na minha vida, o quão especial vc se tornaria, por ser essa pessoa incrível que me conquista todo dia. Eu amo seu sorriso, sua voz, seu cabelo, sua risada, sua companhia, sua alegria...<br>Eu amo você todinha meu amor ❤️</p>
-    <p style="margin-top: 4vh; font-size: clamp(1.4rem, 5vw, 2rem);">Ass: Daniel</p>
+    <p style="margin-top: 4vh; font-size: clamp(1.2rem, 4.5vw, 1.8rem);">Ass: Daniel</p>
   </div>
 
-  <!-- Música SoundCloud (sem ads visíveis) -->
+  <!-- Música SoundCloud -->
   <iframe id="soundcloudPlayer" width="100%" height="0" scrolling="no" frameborder="no" allow="autoplay"
     src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/872330833&color=%23ff5500&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false">
   </iframe>
@@ -264,7 +269,7 @@
         setTimeout(() => heart.remove(), 25000);
       }
     }
-    setInterval(() => createHeart(3, 0.8, 8), 170); // normal
+    window.heartInterval = setInterval(() => createHeart(3, 0.8, 8), 170);
 
     function explodeHearts(x, y) {
       const colors = ['❤️','💖','💗','💓','💞'];
@@ -396,14 +401,13 @@
           stage.classList.remove('visible');
           document.getElementById('finalStage').classList.add('visible');
 
-          // Após +10s da tela "uma língua é pouco", vai pra página final
           setTimeout(() => {
             document.getElementById('finalStage').classList.remove('visible');
             document.getElementById('thankYouStage').classList.add('visible');
 
             // Reduz corações em 70% na última página
             clearInterval(window.heartInterval);
-            window.heartInterval = setInterval(() => createHeart(1, 0.5, 12), 600); // 1 coração a cada 600ms, opacidade baixa, duração maior
+            window.heartInterval = setInterval(() => createHeart(1, 0.4, 15), 800);
           }, 10000);
         }, 10000);
       } catch (error) {
@@ -412,9 +416,6 @@
         document.getElementById('thankYouStage').classList.add('visible');
       }
     }
-
-    // Inicia intervalo normal de corações
-    window.heartInterval = setInterval(() => createHeart(3, 0.8, 8), 170);
 
     const styleSheet = document.createElement('style');
     styleSheet.textContent = `
