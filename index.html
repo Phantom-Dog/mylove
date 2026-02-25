@@ -454,7 +454,7 @@
       document.getElementById('thankYouStage').classList.remove('visible');
       document.getElementById('timeSinceStage').classList.add('visible');
       updateTimeCounter();
-      setInterval(updateTimeCounter, 60000); // Atualiza a cada minuto
+      setInterval(updateTimeCounter, 1000); // Atualiza a cada segundo
     }
 
     function updateTimeCounter() {
@@ -466,8 +466,9 @@
       const days = Math.floor((diffMs % (1000 * 60 * 60 * 24 * 30.4375)) / (1000 * 60 * 60 * 24));
       const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diffMs % (1000 * 60)) / 1000);
 
-      const counterText = `O primeiro 'te amo' foi há ${months} meses, ${days} dias, ${hours} horas e ${minutes} minutos ❤️`;
+      const counterText = `O primeiro 'te amo' foi há ${months} meses, ${days} dias, ${hours} horas, ${minutes} minutos e ${seconds} segundos ❤️`;
 
       document.getElementById('timeCounter').textContent = counterText;
     }
