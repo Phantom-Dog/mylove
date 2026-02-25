@@ -139,7 +139,7 @@
     }
     .main.visible { display: flex; }
 
-    #nextBtn {
+    #nextBtn, #nextSurpriseBtn {
       display: none;
       margin: 8vh auto 5vh;
       padding: 1.2rem 3.5rem;
@@ -153,7 +153,7 @@
       box-shadow: 0 6px 20px rgba(125,60,255,0.5);
       transition: all 0.25s;
     }
-    #nextBtn:active {
+    #nextBtn:active, #nextSurpriseBtn:active {
       transform: scale(0.96);
       box-shadow: 0 4px 12px rgba(125,60,255,0.4);
     }
@@ -268,7 +268,7 @@
   <div class="stage thankYou" id="thankYouStage">
     <p>A gente se conheceu há vários meses, e eu não fazia ideia naquela época de quão importante vc viria a ser na minha vida, o quão especial vc se tornaria, por ser essa pessoa incrível que me conquista todo dia. Eu amo seu sorriso, sua voz, seu cabelo, sua risada, sua companhia, sua alegria...<br>Eu amo você todinha meu amor ❤️</p>
     <p style="margin-top: 4vh; font-size: clamp(1.2rem, 4.5vw, 1.8rem);">Ass: Daniel</p>
-    <p id="countdown" style="margin-top: 4vh; font-size: clamp(1.2rem, 4.5vw, 1.8rem);">  15 segundos</p>
+    <button id="nextSurpriseBtn" onclick="goToTimeSince()">PRÓXIMO</button>
   </div>
 
   <div class="stage thankYou" id="timeSinceStage">
@@ -442,25 +442,19 @@
         setTimeout(() => {
           document.getElementById('finalStage').classList.remove('visible');
           document.getElementById('thankYouStage').classList.add('visible');
+          document.getElementById('nextSurpriseBtn').style.display = 'block';
 
           clearInterval(window.heartInterval);
           window.heartInterval = setInterval(() => createHeart(1, 0.4, 15), 800);
-
-          let countdown = 15;
-          const countdownElem = document.getElementById('countdown');
-          const countdownInterval = setInterval(() => {
-            countdown--;
-            countdownElem.textContent = ` ${countdown} segundos`;
-            if (countdown <= 0) {
-              clearInterval(countdownInterval);
-              document.getElementById('thankYouStage').classList.remove('visible');
-              document.getElementById('timeSinceStage').classList.add('visible');
-              updateTimeCounter();
-              setInterval(updateTimeCounter, 60000);
-            }
-          }, 1000);
         }, 10000);
       }, 10000);
+    }
+
+    function goToTimeSince() {
+      document.getElementById('thankYouStage').classList.remove('visible');
+      document.getElementById('timeSinceStage').classList.add('visible');
+      updateTimeCounter();
+      setInterval(updateTimeCounter, 60000); // Atualiza a cada minuto
     }
 
     function updateTimeCounter() {
@@ -473,7 +467,7 @@
       const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
 
-      const counterText = `O primeiro "Te amo" foi há ${months} meses, ${days} dias, ${hours} horas e ${minutes} minutos ❤️`;
+      const counterText = `O primeiro 'te amo' foi há ${months} meses, ${days} dias, ${hours} horas e ${minutes} minutos ❤️`;
 
       document.getElementById('timeCounter').textContent = counterText;
     }
