@@ -241,7 +241,7 @@
 
   <!-- Música: Pra Sempre Com Você - Jorge & Mateus (Spotify embed, sem ads visíveis) -->
   <iframe id="spotifyPlayer" style="border-radius:12px; position:fixed; bottom:0; left:0; width:100%; height:0; opacity:0;"
-    src="https://open.spotify.com/embed/track/2rlz93al7Fdc202Tl9Lbh6?utm_source=generator"
+    src="https://open.spotify.com/embed/track/2KGv51jgAz8OTjNPyRryfq?utm_source=generator"
     width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
 
   <script>
@@ -424,7 +424,8 @@
 
     document.addEventListener('click', () => {
       const player = document.getElementById('spotifyPlayer');
-      if (player && player.src.includes('auto_play=false')) {
+      if (player) {
+        // Força autoplay após interação
         player.src = player.src.replace('auto_play=false', 'auto_play=true');
       }
     }, { once: true });
